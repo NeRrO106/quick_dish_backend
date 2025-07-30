@@ -1,4 +1,9 @@
 
+using Microsoft.EntityFrameworkCore;
+using QUickDish.API.Data;
+using QUickDish.API.Repos;
+using QUickDish.API.Services;
+
 namespace QUickDish.API
 {
     public class Startup
@@ -32,6 +37,17 @@ namespace QUickDish.API
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
+
+
+            //repositories
+            services.AddScoped<UserRepo>();
+
+            //services
+            services.AddScoped<UserService>();
+
+            //database context
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlite("Data Source = quick_dish.db"));
 
         }
     }
