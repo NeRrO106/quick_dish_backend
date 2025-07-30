@@ -49,14 +49,15 @@ namespace QUickDish.API.Repos
             await _context.SaveChangesAsync();
             return user;
         }
-        public async Task<bool> DeleteUserAsync(int id)
+        public async Task DeleteUserAsync(int id)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-            if (user == null)
-                return false;
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-            return true;
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+
+            }
         }
         public async Task<bool> UpdateUserAsync(int id, UserUpdateDto dto)
         {

@@ -41,9 +41,11 @@ namespace QUickDish.API
 
             //repositories
             services.AddScoped<UserRepo>();
+            services.AddScoped<ProductRepo>();
 
             //services
             services.AddScoped<UserService>();
+            services.AddScoped<ProductService>();
 
             //database context
             services.AddDbContext<AppDbContext>(options =>

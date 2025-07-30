@@ -24,6 +24,11 @@ namespace QUickDish.API.Repos
             return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        public async Task<bool> GetProductByNameAsync(string name)
+        {
+            return await _context.Products.AnyAsync(p => p.Name == name);
+        }
+
         public async Task<Product> CreateProductAsync(CreateProductDto dto)
         {
             var product = new Product
@@ -39,15 +44,15 @@ namespace QUickDish.API.Repos
             return product;
         }
 
-        public async Task<bool> DeleteProduct(int id)
+        public async Task DeleteProductAsync(int id)
         {
             var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
 
-            if (product == null)
-                return false;
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
-            return true;
+            if (product != null)
+            {
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<bool> UpdateProductAsync(int id, CreateProductDto dto)

@@ -42,10 +42,9 @@ namespace QUickDish.API.Controllers
         [HttpDelete("DeleteUser/{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var user = await _userService.DeleteUserAsync(id);
-            if (!user)
-                return NotFound("User not found.");
+            await _userService.DeleteUserAsync(id);
             return Ok("User deleted successfully.");
+
         }
         /*[HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] LoginDto dto)

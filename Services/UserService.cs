@@ -37,9 +37,9 @@ namespace QUickDish.API.Services
         {
             return await _dbRepo.CreateUserAsync(dto);
         }
-        public async Task<bool> DeleteUserAsync(int id)
+        public async Task DeleteUserAsync(int id)
         {
-            return await _dbRepo.DeleteUserAsync(id);
+            await _dbRepo.DeleteUserAsync(id);
         }
         public async Task<bool> UpdateUserAsync(int id, UserUpdateDto dto)
         {
