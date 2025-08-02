@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QUickDish.API.DTOs;
 using QUickDish.API.Services;
+using System.Security.Claims;
 
 namespace QUickDish.API.Controllers
 {
@@ -46,18 +49,40 @@ namespace QUickDish.API.Controllers
             return Ok("User deleted successfully.");
 
         }
-        /*[HttpPost("login")]
+        [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] LoginDto dto)
         {
-            var user = await _userService.GetUserByNameAsync(dto.Name);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(BCrypt.Net.BCrypt.HashPassword(dto.Password), user.PasswordHash))
-                return Unauthorized("Invalid username or password.");
+            var user = await _userService.AuthenticateUserAsync(dto);
+            if (user == null)
+                return Unauthorized("Invalid credential");
             var claims = new List<Claim>
             {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role),
+            };
 
-            }
+            var identity = new ClaimsIdentity(claims, "CookieAuth");
+            var principal = new ClaimsPrincipal(identity);
 
-        }*/
+            await HttpContext.SignInAsync("CookieAuth", principal, new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTime.UtcNow.AddHours(2)
+            });
+
+            return Ok("Login succesful");
+        }
+        [Authorize]
+        [HttpGet("me")]
+        public IActionResult Me()
+        {
+            var name = User.FindFirst(ClaimTypes.Name)?.Value;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            return Ok(new { name, email, role });
+        }
 
     }
 }

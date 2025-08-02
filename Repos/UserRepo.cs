@@ -75,12 +75,13 @@ namespace QUickDish.API.Repos
             await _context.SaveChangesAsync();
             return true;
         }
-        /*public async Task<bool> LoginUserAsync(string name, string password)
+        public async Task<User?> AuthenticateUserAsync(LoginDto dto)
         {
-            var user = await GetUserByNameAsync(name);
-            if (user == null) return false;
-
-            return BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
-        }*/
+            var user = await GetUserByNameAsync(dto.Name);
+            if (user == null) return null;
+            var result = BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
+            if (!result) return null;
+            return user;
+        }
     }
 }

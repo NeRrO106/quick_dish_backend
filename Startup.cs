@@ -25,6 +25,9 @@ namespace QUickDish.API
 
             app.UseHttpsRedirection();
 
+            app.UseCors("AllowFrontend");
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
@@ -51,6 +54,32 @@ namespace QUickDish.API
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlite("Data Source = quick_dish.db"));
 
+
+            //cors
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:5173")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                    });
+
+            });
+
+            //auth
+            services.AddAuthentication("CookieAuth")
+                .AddCookie("CookieAuth", options =>
+                {
+                    options.LoginPath = "/login";
+                    options.Cookie.Name = "AuthCookie";
+                    options.ExpireTimeSpan = TimeSpan.FromHours(2);
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.SameSite = SameSiteMode.Strict;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                });
         }
     }
 }

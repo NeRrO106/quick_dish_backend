@@ -45,5 +45,9 @@ namespace QUickDish.API.Services
         {
             return await _dbRepo.UpdateUserAsync(id, dto);
         }
+        public async Task<User?> AuthenticateUserAsync(LoginDto dto)
+        {
+            return await _dbRepo.AuthenticateUserAsync(dto);
+        }
     }
 }
