@@ -73,6 +73,28 @@ namespace QUickDish.API.Controllers
 
             return Ok("Login succesful");
         }
+        [HttpPost("login-ghost")]
+        public async Task<IActionResult> LoginGuest()
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Name, "Ghost"),
+                new Claim(ClaimTypes.Email, "ghost@ghost.com"),
+                new Claim(ClaimTypes.Role, "Ghost"),
+            };
+
+            var identity = new ClaimsIdentity(claims, "CookieAuth");
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync("CookieAuth", principal, new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTime.UtcNow.AddHours(2)
+            });
+
+            return Ok("Login succesful as a ghost");
+        }
         [Authorize]
         [HttpGet("me")]
         public IActionResult Me()
