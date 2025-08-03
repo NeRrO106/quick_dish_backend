@@ -29,11 +29,9 @@ namespace QUickDish.API.Controllers
         {
             if (dto == null)
                 return BadRequest("Invalid user data.");
-            if (await _userService.EmailExistAsync(dto.Email))
-                return BadRequest("Email already exists.");
             var user = await _userService.CreateUserAsync(dto);
             return Ok(user);
-        }
+        }//permisiune admin
         [HttpPut("UpdateUser/{id}")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateDto dto)
         {
@@ -42,6 +40,7 @@ namespace QUickDish.API.Controllers
                 return NotFound("User not found.");
             return Ok(user);
         }
+        //permisiune admin
         [HttpDelete("DeleteUser/{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {

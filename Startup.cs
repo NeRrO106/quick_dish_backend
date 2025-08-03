@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using QUickDish.API.Data;
 using QUickDish.API.Repos;
@@ -73,12 +74,25 @@ namespace QUickDish.API
             services.AddAuthentication("CookieAuth")
                 .AddCookie("CookieAuth", options =>
                 {
-                    options.LoginPath = "/login";
                     options.Cookie.Name = "AuthCookie";
                     options.ExpireTimeSpan = TimeSpan.FromHours(2);
                     options.Cookie.HttpOnly = true;
-                    options.Cookie.SameSite = SameSiteMode.Strict;
-                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    options.Cookie.SameSite = SameSiteMode.Lax;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.None; // Pentru localhost HTTP
+
+                    options.Events = new CookieAuthenticationEvents
+                    {
+                        OnRedirectToLogin = context =>
+                        {
+                            if (context.Request.Path.StartsWithSegments("/api"))
+                            {
+                                context.Response.StatusCode = 401;
+                                return Task.CompletedTask;
+                            }
+                            context.Response.Redirect(context.RedirectUri);
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
         }
     }

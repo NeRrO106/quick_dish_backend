@@ -22,7 +22,7 @@ namespace QUickDish.API.Repos
         }
         public async Task<User?> GetUserByNameAsync(string name)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Name == name);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Name.ToLower() == name.ToLower());
         }
         public async Task<string?> GetUserRoleAsync(int id)
         {
@@ -33,14 +33,19 @@ namespace QUickDish.API.Repos
         }
         public async Task<bool> EmailExistAsync(string email)
         {
-            return await _context.Users.AnyAsync(u => u.Email == email); //AnyAsync verifica daca exista 
+            return await _context.Users.AnyAsync(u => u.Email.ToLower() == email.ToLower()); //AnyAsync verifica daca exista 
         }
-        public async Task<User> CreateUserAsync(RegisterUserDto dto)
+        public async Task<User?> CreateUserAsync(RegisterUserDto dto)
         {
+            if (await EmailExistAsync(dto.Email.ToLower()))
+                return null;
+            var user_exist = await GetUserByNameAsync(dto.Name.ToLower());
+            if (user_exist != null)
+                return null;
             var user = new User
             {
                 Name = dto.Name,
-                Email = dto.Email,
+                Email = dto.Email.ToLower(),
                 Role = "Client",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 CreatedAt = DateTime.UtcNow
