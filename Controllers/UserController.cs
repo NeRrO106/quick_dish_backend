@@ -95,6 +95,12 @@ namespace QUickDish.API.Controllers
 
             return Ok("Login succesful as a ghost");
         }
+        [HttpPost("logout")]
+        public async Task<IActionResult> LogOut()
+        {
+            await HttpContext.SignOutAsync();
+            return Ok("SignOut");
+        }
         [Authorize]
         [HttpGet("me")]
         public IActionResult Me()
