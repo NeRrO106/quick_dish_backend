@@ -5,11 +5,11 @@ using QUickDish.API.Models;
 
 namespace QUickDish.API.Repos
 {
-    public class ProductRepo
+    public class ProductRepository
     {
         private readonly AppDbContext _context;
 
-        public ProductRepo(AppDbContext context)
+        public ProductRepository(AppDbContext context)
         {
             _context = context;
         }

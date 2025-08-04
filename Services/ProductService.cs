@@ -6,38 +6,38 @@ namespace QUickDish.API.Services
 {
     public class ProductService
     {
-        private readonly ProductRepo _productRepo;
-        public ProductService(ProductRepo productRepo)
+        private readonly ProductRepository _productRepository;
+        public ProductService(ProductRepository productRepository)
         {
-            _productRepo = productRepo;
+            _productRepository = productRepository;
         }
 
         public async Task<List<Product>> GetAllProductsAsync()
         {
-            return await _productRepo.GetAllProductsAsync();
+            return await _productRepository.GetAllProductsAsync();
         }
 
         public async Task<Product?> GetProductByIdAsync(int id)
         {
-            return await _productRepo.GetProductByIdAsync(id);
+            return await _productRepository.GetProductByIdAsync(id);
         }
 
         public async Task<bool> GetProductByNameAsync(string name)
         {
-            return await _productRepo.GetProductByNameAsync(name);
+            return await _productRepository.GetProductByNameAsync(name);
         }
 
         public async Task<Product> CreateProductAsync(CreateProductDto dto)
         {
-            return await _productRepo.CreateProductAsync(dto);
+            return await _productRepository.CreateProductAsync(dto);
         }
         public async Task DeleteProductAsync(int id)
         {
-            await _productRepo.DeleteProductAsync(id);
+            await _productRepository.DeleteProductAsync(id);
         }
         public async Task<bool> UpdateProductAsync(int id, CreateProductDto dto)
         {
-            return await _productRepo.UpdateProductAsync(id, dto);
+            return await _productRepository.UpdateProductAsync(id, dto);
         }
     }
 }

@@ -15,14 +15,14 @@ namespace QUickDish.API.Controllers
             _productService = productService;
         }
 
-        [HttpGet("products")]
+        [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
             var products = await _productService.GetAllProductsAsync();
             return Ok(products);
         }
 
-        [HttpGet("products/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
@@ -31,7 +31,7 @@ namespace QUickDish.API.Controllers
             return Ok(product);
         }
 
-        [HttpPost("products")]
+        [HttpPost]
         public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto dto)
         {
             if (dto == null)
@@ -42,7 +42,7 @@ namespace QUickDish.API.Controllers
             return Ok(product);
         }
 
-        [HttpPut("products/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] CreateProductDto dto)
         {
             var product = await _productService.UpdateProductAsync(id, dto);

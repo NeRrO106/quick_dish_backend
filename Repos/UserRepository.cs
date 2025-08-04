@@ -5,10 +5,10 @@ using QUickDish.API.Models;
 
 namespace QUickDish.API.Repos
 {
-    public class UserRepo
+    public class UserRepository
     {
         private readonly AppDbContext _context;
-        public UserRepo(AppDbContext context)
+        public UserRepository(AppDbContext context)
         {
             _context = context;
         }
@@ -35,7 +35,7 @@ namespace QUickDish.API.Repos
         {
             return await _context.Users.AnyAsync(u => u.Email.ToLower() == email.ToLower()); //AnyAsync verifica daca exista 
         }
-        public async Task<User?> CreateUserAsync(RegisterUserDto dto)
+        public async Task<User> CreateUserAsync(RegisterUserDto dto)
         {
             if (await EmailExistAsync(dto.Email.ToLower()))
                 return null;
@@ -80,7 +80,7 @@ namespace QUickDish.API.Repos
             await _context.SaveChangesAsync();
             return true;
         }
-        public async Task<User?> AuthenticateUserAsync(LoginDto dto)
+        public async Task<User?> AuthenticateUserAsync(LoginRequest dto)
         {
             var user = await GetUserByNameAsync(dto.Name);
             if (user == null) return null;

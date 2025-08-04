@@ -43,20 +43,17 @@ namespace QUickDish.API
             services.AddSwaggerGen();
 
 
-            //repositories
-            services.AddScoped<UserRepo>();
-            services.AddScoped<ProductRepo>();
+            services.AddScoped<UserRepository>();
+            services.AddScoped<ProductRepository>();
 
-            //services
             services.AddScoped<UserService>();
             services.AddScoped<ProductService>();
+            services.AddScoped<AuthServices>();
 
-            //database context
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlite("Data Source = quick_dish.db"));
 
 
-            //cors
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowFrontend",
@@ -70,15 +67,15 @@ namespace QUickDish.API
 
             });
 
-            //auth
             services.AddAuthentication("CookieAuth")
                 .AddCookie("CookieAuth", options =>
                 {
                     options.Cookie.Name = "AuthCookie";
                     options.ExpireTimeSpan = TimeSpan.FromHours(2);
-                    options.Cookie.HttpOnly = true;
+                    options.SlidingExpiration = true;
+                    options.Cookie.HttpOnly = false;
                     options.Cookie.SameSite = SameSiteMode.Lax;
-                    options.Cookie.SecurePolicy = CookieSecurePolicy.None; // Pentru localhost HTTP
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.None;
 
                     options.Events = new CookieAuthenticationEvents
                     {

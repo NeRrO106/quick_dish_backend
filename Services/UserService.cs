@@ -6,9 +6,9 @@ namespace QUickDish.API.Services
 {
     public class UserService
     {
-        private readonly UserRepo _dbRepo;
+        private readonly UserRepository _dbRepo;
 
-        public UserService(UserRepo dbRepo)
+        public UserService(UserRepository dbRepo)
         {
             _dbRepo = dbRepo;
         }
@@ -44,10 +44,6 @@ namespace QUickDish.API.Services
         public async Task<bool> UpdateUserAsync(int id, UserUpdateDto dto)
         {
             return await _dbRepo.UpdateUserAsync(id, dto);
-        }
-        public async Task<User?> AuthenticateUserAsync(LoginDto dto)
-        {
-            return await _dbRepo.AuthenticateUserAsync(dto);
         }
     }
 }
