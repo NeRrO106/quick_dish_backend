@@ -50,7 +50,7 @@ namespace QUickDish.API.Controllers
                 return NotFound("User not found.");
             return Ok(product);
         }
-        [HttpDelete("products/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             await _productService.DeleteProductAsync(id);

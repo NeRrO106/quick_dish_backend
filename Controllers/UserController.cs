@@ -16,12 +16,20 @@ namespace QUickDish.API.Controllers
         {
             _userService = userService;
         }
-
+        //[Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _userService.GetAllUsersAsync();
             return Ok(users);
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(int id)
+        {
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null)
+                return NotFound("Product not found.");
+            return Ok(user);
         }
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] RegisterUserDto dto)
@@ -30,7 +38,8 @@ namespace QUickDish.API.Controllers
                 return BadRequest("Invalid user data.");
             var user = await _userService.CreateUserAsync(dto);
             return Ok(user);
-        }//permisiune admin
+        }
+        //[Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateDto dto)
         {
@@ -39,7 +48,7 @@ namespace QUickDish.API.Controllers
                 return NotFound("User not found.");
             return Ok(user);
         }
-        //permisiune admin
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {

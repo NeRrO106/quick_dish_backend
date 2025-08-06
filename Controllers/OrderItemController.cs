@@ -2,7 +2,7 @@
 
 namespace QUickDish.API.Controllers
 {
-    public class Order_ItemController : Controller
+    public class OrderItemController : Controller
     {
         public IActionResult Index()
         {
