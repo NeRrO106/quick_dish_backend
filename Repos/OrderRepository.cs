@@ -14,33 +14,148 @@ namespace QUickDish.API.Repos
             _context = context;
         }
 
-        public async Task<List<Order>> GetOrdersAsync()
+        public async Task<List<OrderResponseDTO>> GetOrdersAsync()
         {
             return await _context.Orders
                 .Include(o => o.Items)
+                .Select(o => new OrderResponseDTO
+                {
+                    Id = o.Id,
+                    UserName = _context.Users
+                        .Where(u => u.Id == o.UserId)
+                        .Select(u => u.Name)
+                        .FirstOrDefault(),
+                    CourierName = _context.Users
+                        .Where(u => u.Id == o.CourierId)
+                        .Select(u => u.Name)
+                        .FirstOrDefault(),
+                    Address = o.Address,
+                    TotalAmount = o.TotalAmount,
+                    Status = o.Status,
+                    Items = o.Items.Select(i => new OrderItemDTO
+                    {
+                        ProductName = _context.Products
+                        .Where(p => p.Id == i.ProductId)
+                        .Select(u => u.Name)
+                        .FirstOrDefault(),
+                        ProductDescription = _context.Products
+                        .Where(p => p.Id == i.ProductId)
+                        .Select(u => u.Description)
+                        .FirstOrDefault(),
+                        Quantity = i.Quantity,
+                        Price = i.UnitPrice,
+                        TotalPrice = i.TotalPrice,
+                    }).ToList()
+                })
                 .ToListAsync();
         }
 
-        public async Task<Order?> GetOrdersByIdAsync(int id)
+        public async Task<OrderResponseDTO?> GetOrdersByIdAsync(int id)
         {
             return await _context.Orders
                 .Include(o => o.Items)
-                .FirstOrDefaultAsync(o => o.Id == id);
+                .Where(o => o.Id == id)
+                .Select(o => new OrderResponseDTO
+                {
+                    Id = o.Id,
+                    UserName = _context.Users
+                        .Where(u => u.Id == o.UserId)
+                        .Select(u => u.Name)
+                        .FirstOrDefault(),
+                    CourierName = _context.Users
+                        .Where(u => u.Id == o.CourierId)
+                        .Select(u => u.Name)
+                        .FirstOrDefault(),
+                    Address = o.Address,
+                    TotalAmount = o.TotalAmount,
+                    Status = o.Status,
+                    Items = o.Items.Select(i => new OrderItemDTO
+                    {
+                        ProductName = _context.Products
+                        .Where(p => p.Id == i.ProductId)
+                        .Select(u => u.Name)
+                        .FirstOrDefault(),
+                        ProductDescription = _context.Products
+                        .Where(p => p.Id == i.ProductId)
+                        .Select(u => u.Description)
+                        .FirstOrDefault(),
+                        Quantity = i.Quantity,
+                        Price = i.UnitPrice,
+                        TotalPrice = i.TotalPrice,
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
         }
 
-        public async Task<List<Order>> GetOrdersByUserIdAsync(int userId)
+        public async Task<List<OrderResponseDTO>> GetOrdersByUserIdAsync(int userId)
         {
             return await _context.Orders
                 .Where(o => o.UserId == userId)
-                .Include(o => o.Items)
+                .Select(o => new OrderResponseDTO
+                {
+                    Id = o.Id,
+                    UserName = _context.Users
+                        .Where(u => u.Id == o.UserId)
+                        .Select(u => u.Name)
+                        .FirstOrDefault(),
+                    CourierName = _context.Users
+                        .Where(u => u.Id == o.CourierId)
+                        .Select(u => u.Name)
+                        .FirstOrDefault(),
+                    Address = o.Address,
+                    TotalAmount = o.TotalAmount,
+                    Status = o.Status,
+                    Items = o.Items.Select(i => new OrderItemDTO
+                    {
+                        ProductName = _context.Products
+                        .Where(p => p.Id == i.ProductId)
+                        .Select(u => u.Name)
+                        .FirstOrDefault(),
+                        ProductDescription = _context.Products
+                        .Where(p => p.Id == i.ProductId)
+                        .Select(u => u.Description)
+                        .FirstOrDefault(),
+                        Quantity = i.Quantity,
+                        Price = i.UnitPrice,
+                        TotalPrice = i.TotalPrice,
+                    }).ToList()
+                })
                 .ToListAsync();
         }
 
-        public async Task<List<Order>> GetOrdersByCourierIdAsync(int courierId)
+        public async Task<List<OrderResponseDTO>> GetOrdersByCourierIdAsync(int courierId)
         {
             return await _context.Orders
                 .Where(o => o.CourierId == courierId)
-                .Include(o => o.Items)
+                .Select(o => new OrderResponseDTO
+                {
+                    Id = o.Id,
+                    UserName = _context.Users
+                        .Where(u => u.Id == o.UserId)
+                        .Select(u => u.Name)
+                        .FirstOrDefault(),
+                    CourierName = _context.Users
+                        .Where(u => u.Id == o.CourierId)
+                        .Select(u => u.Name)
+                        .FirstOrDefault(),
+                    Address = o.Address,
+                    TotalAmount = o.TotalAmount,
+                    Status = o.Status,
+                    Items = o.Items.Select(i => new OrderItemDTO
+                    {
+                        ProductName = _context.Products
+                        .Where(p => p.Id == i.ProductId)
+                        .Select(u => u.Name)
+                        .FirstOrDefault(),
+                        ProductDescription = _context.Products
+                        .Where(p => p.Id == i.ProductId)
+                        .Select(u => u.Description)
+                        .FirstOrDefault(),
+                        Quantity = i.Quantity,
+                        Price = i.UnitPrice,
+                        TotalPrice = i.TotalPrice,
+                    }).ToList()
+                })
                 .ToListAsync();
         }
 
