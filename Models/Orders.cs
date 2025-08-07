@@ -7,7 +7,6 @@
         public int CourierId { get; set; }
         public string Address { get; set; }
         public int PhoneNumber { get; set; }
-        public string Email { get; set; }
         public decimal TotalAmount { get; set; }
         public string Status { get; set; } = "Pending";
 
