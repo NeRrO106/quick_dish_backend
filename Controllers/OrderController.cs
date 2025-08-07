@@ -42,7 +42,7 @@ namespace QUickDish.API.Controllers
             return Ok(order);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateOrder([FromBody] Orders order)
+        public async Task<IActionResult> CreateOrder([FromBody] Order order)
         {
             if (order == null)
                 return BadRequest("Invalid order data");

@@ -14,21 +14,21 @@ namespace QUickDish.API.Repos
             _context = context;
         }
 
-        public async Task<List<Orders>> GetOrdersAsync()
+        public async Task<List<Order>> GetOrdersAsync()
         {
             return await _context.Orders
                 .Include(o => o.Items)
                 .ToListAsync();
         }
 
-        public async Task<Orders?> GetOrdersByIdAsync(int id)
+        public async Task<Order?> GetOrdersByIdAsync(int id)
         {
             return await _context.Orders
                 .Include(o => o.Items)
                 .FirstOrDefaultAsync(o => o.Id == id);
         }
 
-        public async Task<List<Orders>> GetOrdersByUserIdAsync(int userId)
+        public async Task<List<Order>> GetOrdersByUserIdAsync(int userId)
         {
             return await _context.Orders
                 .Where(o => o.UserId == userId)
@@ -36,7 +36,7 @@ namespace QUickDish.API.Repos
                 .ToListAsync();
         }
 
-        public async Task<List<Orders>> GetOrdersByCourierIdAsync(int courierId)
+        public async Task<List<Order>> GetOrdersByCourierIdAsync(int courierId)
         {
             return await _context.Orders
                 .Where(o => o.CourierId == courierId)
@@ -44,7 +44,7 @@ namespace QUickDish.API.Repos
                 .ToListAsync();
         }
 
-        public async Task<Orders> CreateOrder(Orders order)
+        public async Task<Order> CreateOrder(Order order)
         {
             if (order == null || order.Items == null || !order.Items.Any())
                 throw new ArgumentException("Order must contain at least one item");

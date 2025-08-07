@@ -13,26 +13,26 @@ namespace QUickDish.API.Services
             _orderRepository = orderRepository;
         }
 
-        public async Task<List<Orders>> GetOrdersAsync()
+        public async Task<List<Order>> GetOrdersAsync()
         {
             return await _orderRepository.GetOrdersAsync();
         }
 
-        public async Task<Orders?> GetOrdersByIdAsync(int id)
+        public async Task<Order?> GetOrdersByIdAsync(int id)
         {
             return await _orderRepository.GetOrdersByIdAsync(id);
         }
 
-        public async Task<List<Orders>> GetOrdersByUserIdAsync(int userId)
+        public async Task<List<Order>> GetOrdersByUserIdAsync(int userId)
         {
             return await _orderRepository.GetOrdersByUserIdAsync(userId);
         }
-        public async Task<List<Orders>> GetOrdersByCourierIdAsync(int courierId)
+        public async Task<List<Order>> GetOrdersByCourierIdAsync(int courierId)
         {
             return await _orderRepository.GetOrdersByCourierIdAsync(courierId);
         }
 
-        public async Task<Orders?> CreateOrder(Orders order)
+        public async Task<Order?> CreateOrder(Order order)
         {
             return await _orderRepository.CreateOrder(order);
         }

@@ -1,10 +1,10 @@
 ﻿namespace QUickDish.API.Models
 {
-    public class Orders
+    public class Order
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-        public int CourierId { get; set; }
+        public int? CourierId { get; set; }
         public string Address { get; set; }
         public int PhoneNumber { get; set; }
         public decimal TotalAmount { get; set; }
