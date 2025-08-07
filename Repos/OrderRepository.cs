@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QUickDish.API.Data;
+using QUickDish.API.DTOs;
 using QUickDish.API.Models;
 
 namespace QUickDish.API.Repos
@@ -13,17 +14,21 @@ namespace QUickDish.API.Repos
             _context = context;
         }
 
-        public async Task<List<Orders>> GetAllAsync()
+        public async Task<List<Orders>> GetOrdersAsync()
         {
-            return await _context.Orders.ToListAsync();
+            return await _context.Orders
+                .Include(o => o.Items)
+                .ToListAsync();
         }
 
-        public async Task<Orders?> GetByIdAsync(int id)
+        public async Task<Orders?> GetOrdersByIdAsync(int id)
         {
-            return await _context.Orders.FindAsync(id);
+            return await _context.Orders
+                .Include(o => o.Items)
+                .FirstOrDefaultAsync(o => o.Id == id);
         }
 
-        public async Task<List<Orders>> GetByUserId(int userId)
+        public async Task<List<Orders>> GetOrdersByUserIdAsync(int userId)
         {
             return await _context.Orders
                 .Where(o => o.UserId == userId)
@@ -31,7 +36,7 @@ namespace QUickDish.API.Repos
                 .ToListAsync();
         }
 
-        public async Task<List<Orders>> GetByCourierId(int courierId)
+        public async Task<List<Orders>> GetOrdersByCourierIdAsync(int courierId)
         {
             return await _context.Orders
                 .Where(o => o.CourierId == courierId)
@@ -39,16 +44,28 @@ namespace QUickDish.API.Repos
                 .ToListAsync();
         }
 
-        public async Task CreateOrder(Orders order)
+        public async Task<Orders> CreateOrder(Orders order)
         {
+            if (order == null || order.Items == null || !order.Items.Any())
+                throw new ArgumentException("Order must contain at least one item");
+            order.CreatedAt = DateTime.Now;
+            order.TotalAmount = order.Items.Sum(item => item.TotalPrice);
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
+            return order;
         }
 
-        public async Task UpdateOrder(Orders order)
+        public async Task<bool> UpdateOrder(int id, OrderUpdateRequest dto)
         {
-            _context.Orders.Add(order);
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == id);
+            if (order == null)
+                return false;
+            if (dto.CourierID.HasValue)
+                order.CourierId = dto.CourierID.Value;
+            if (!string.IsNullOrEmpty(dto.Status))
+                order.Status = dto.Status;
             await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task DeleteOrder(int id)

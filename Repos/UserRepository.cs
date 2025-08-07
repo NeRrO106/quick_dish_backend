@@ -35,7 +35,7 @@ namespace QUickDish.API.Repos
         {
             return await _context.Users.AnyAsync(u => u.Email.ToLower() == email.ToLower()); //AnyAsync verifica daca exista 
         }
-        public async Task<User> CreateUserAsync(RegisterUserDto dto)
+        public async Task<User?> CreateUserAsync(RegisterUserDto dto)
         {
             if (await EmailExistAsync(dto.Email.ToLower()))
                 return null;

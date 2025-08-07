@@ -17,7 +17,6 @@ namespace QUickDish.API
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -45,9 +44,11 @@ namespace QUickDish.API
 
             services.AddScoped<UserRepository>();
             services.AddScoped<ProductRepository>();
+            services.AddScoped<OrderRepository>();
 
             services.AddScoped<UserService>();
             services.AddScoped<ProductService>();
+            services.AddScoped<OrderService>();
             services.AddScoped<AuthServices>();
 
             services.AddDbContext<AppDbContext>(options =>
