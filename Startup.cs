@@ -41,6 +41,7 @@ namespace QUickDish.API
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
+            services.AddMemoryCache();
 
             services.AddScoped<UserRepository>();
             services.AddScoped<ProductRepository>();

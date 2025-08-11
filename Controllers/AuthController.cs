@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using QUickDish.API.DTOs;
 using QUickDish.API.Services;
 using System.Security.Claims;
@@ -12,10 +13,17 @@ namespace QUickDish.API.Controllers
     {
         private readonly AuthService _authServices;
         private readonly EmailService _emailService;
-        public AuthController(AuthService authServices, EmailService emailService)
+        private readonly UserService _userService;
+        private readonly IMemoryCache _cache;
+
+        private Random _random = new Random();
+
+        public AuthController(AuthService authServices, EmailService emailService, IMemoryCache cache, UserService userService)
         {
             _authServices = authServices;
             _emailService = emailService;
+            _userService = userService;
+            _cache = cache;
         }
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] LoginRequest dto)
@@ -89,6 +97,26 @@ namespace QUickDish.API.Controllers
 
 
             }
+        }
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] string Email)
+        {
+            if (string.IsNullOrEmpty(Email))
+                return BadRequest("Invalid request");
+            var user = await _userService.EmailExistAsync(Email.ToLower());
+            if (!user)
+                return NotFound("User not found");
+            var code = _random.Next(100000, 999999).ToString();
+
+            _cache.Set(Email, code, TimeSpan.FromMinutes(10));
+
+            await _emailService.SendEmailAsync(
+                Email,
+                "Password Reset Code",
+                $"<h1>Password Reset Code</h1> <p>Your password reset code is: <strong>{code}</strong></p>"
+            );
+            return Ok("Code send");
+
         }
     }
 }

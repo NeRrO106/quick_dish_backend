@@ -33,7 +33,7 @@ namespace QUickDish.API.Services
         {
             return await _userRepo.EmailExistAsync(email);
         }
-        public async Task<User> CreateUserAsync(RegisterUserDto dto)
+        public async Task<User?> CreateUserAsync(RegisterUserDto dto)
         {
             return await _userRepo.CreateUserAsync(dto);
         }
