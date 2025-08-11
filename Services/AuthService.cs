@@ -4,11 +4,11 @@ using QUickDish.API.Repos;
 
 namespace QUickDish.API.Services
 {
-    public class AuthServices
+    public class AuthService
     {
         private readonly UserRepository _userRepository;
 
-        public AuthServices(UserRepository userRepository)
+        public AuthService(UserRepository userRepository)
         {
             _userRepository = userRepository;
         }

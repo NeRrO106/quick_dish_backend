@@ -10,10 +10,12 @@ namespace QUickDish.API.Controllers
     [Route("api/[controller]")]
     public class AuthController : Controller
     {
-        private readonly AuthServices _authServices;
-        public AuthController(AuthServices authServices)
+        private readonly AuthService _authServices;
+        private readonly EmailService _emailService;
+        public AuthController(AuthService authServices, EmailService emailService)
         {
             _authServices = authServices;
+            _emailService = emailService;
         }
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] LoginRequest dto)
@@ -67,6 +69,26 @@ namespace QUickDish.API.Controllers
         {
             await HttpContext.SignOutAsync();
             return Ok("SignOut");
+        }
+
+        [HttpGet("send")]
+        public async Task<IActionResult> SendEmail()
+        {
+            try
+            {
+                await _emailService.SendEmailAsync(
+                    "andreilimit66@gmail.com",
+                    "\"Test Email from QuickDish\"",
+                     "<h1>Hello from QuickDish</h1><p>This is a test email sent from the QuickDish application.</p>"
+                );
+                return Ok("Email sent successfully.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to send email: {ex.Message}");
+
+
+            }
         }
     }
 }

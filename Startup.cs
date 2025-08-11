@@ -49,7 +49,10 @@ namespace QUickDish.API
             services.AddScoped<UserService>();
             services.AddScoped<ProductService>();
             services.AddScoped<OrderService>();
-            services.AddScoped<AuthServices>();
+            services.AddScoped<AuthService>();
+
+
+            services.AddSingleton<EmailService>();
 
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlite("Data Source = quick_dish.db"));
