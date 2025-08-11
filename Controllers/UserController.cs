@@ -60,10 +60,11 @@ namespace QUickDish.API.Controllers
         [HttpGet("me")]
         public IActionResult Me()
         {
+            var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var name = User.FindFirst(ClaimTypes.Name)?.Value;
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
-            return Ok(new { name, email, role });
+            return Ok(new { id, name, email, role });
         }
 
     }

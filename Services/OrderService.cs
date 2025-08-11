@@ -27,10 +27,6 @@ namespace QUickDish.API.Services
         {
             return await _orderRepository.GetOrdersByUserIdAsync(userId);
         }
-        public async Task<List<OrderResponseDTO>> GetOrdersByCourierIdAsync(int courierId)
-        {
-            return await _orderRepository.GetOrdersByCourierIdAsync(courierId);
-        }
 
         public async Task<Order?> CreateOrder(Order order)
         {

@@ -123,42 +123,6 @@ namespace QUickDish.API.Repos
                 .ToListAsync();
         }
 
-        public async Task<List<OrderResponseDTO>> GetOrdersByCourierIdAsync(int courierId)
-        {
-            return await _context.Orders
-                .Where(o => o.CourierId == courierId)
-                .Select(o => new OrderResponseDTO
-                {
-                    Id = o.Id,
-                    UserName = _context.Users
-                        .Where(u => u.Id == o.UserId)
-                        .Select(u => u.Name)
-                        .FirstOrDefault(),
-                    CourierName = _context.Users
-                        .Where(u => u.Id == o.CourierId)
-                        .Select(u => u.Name)
-                        .FirstOrDefault(),
-                    Address = o.Address,
-                    TotalAmount = o.TotalAmount,
-                    Status = o.Status,
-                    Items = o.Items.Select(i => new OrderItemDTO
-                    {
-                        ProductName = _context.Products
-                        .Where(p => p.Id == i.ProductId)
-                        .Select(u => u.Name)
-                        .FirstOrDefault(),
-                        ProductDescription = _context.Products
-                        .Where(p => p.Id == i.ProductId)
-                        .Select(u => u.Description)
-                        .FirstOrDefault(),
-                        Quantity = i.Quantity,
-                        Price = i.UnitPrice,
-                        TotalPrice = i.TotalPrice,
-                    }).ToList()
-                })
-                .ToListAsync();
-        }
-
         public async Task<Order> CreateOrder(Order order)
         {
             if (order == null || order.Items == null || !order.Items.Any())

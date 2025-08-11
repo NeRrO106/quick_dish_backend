@@ -29,16 +29,10 @@ namespace QUickDish.API.Controllers
             return Ok(order);
         }
 
-        [HttpGet("/orders/{userId}")]
+        [HttpGet("orders/{userId}")]
         public async Task<IActionResult> GetOrdersByUserId(int userId)
         {
             var order = await _orderService.GetOrdersByUserIdAsync(userId);
-            return Ok(order);
-        }
-        [HttpGet("/courier/{courierId}")]
-        public async Task<IActionResult> GetOrdersByCourierId(int courierId)
-        {
-            var order = await _orderService.GetOrdersByCourierIdAsync(courierId);
             return Ok(order);
         }
         [HttpPost]
