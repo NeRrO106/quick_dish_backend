@@ -123,12 +123,22 @@ namespace QUickDish.API.Controllers
         {
             if (string.IsNullOrEmpty(dto.Email) || string.IsNullOrEmpty(dto.Code) || string.IsNullOrEmpty(dto.NewPassword))
                 return BadRequest("Invalid request");
+            var userExists = await _userService.EmailExistAsync(dto.Email.ToLower());
+            if (!userExists)
+                return NotFound("User not found");
             if (!_cache.TryGetValue(dto.Email, out string? cachedCode) || cachedCode != dto.Code)
                 return BadRequest("Invalid code or code expired");
             var result = await _userService.ChangePasswordAsync(dto.Email, dto.NewPassword);
             if (!result)
                 return BadRequest("Failed to reset password");
             _cache.Remove(dto.Email);
+
+            await _emailService.SendEmailAsync(
+                dto.Email,
+                "Password Reset Confirmation",
+                $"<h1>Password Reset Successful</h1> <p>Your password has been reset successfully.</p> <p>Your new password is {dto.NewPassword}</p>"
+            );
+
             return Ok("Password reset successfully");
         }
     }
