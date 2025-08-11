@@ -32,7 +32,7 @@ namespace QUickDish.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto dto)
+        public async Task<IActionResult> CreateProduct([FromBody] CreateProductRequest dto)
         {
             if (dto == null)
                 return BadRequest("Invalid product data.");
@@ -43,7 +43,7 @@ namespace QUickDish.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProduct(int id, [FromBody] CreateProductDto dto)
+        public async Task<IActionResult> UpdateProduct(int id, [FromBody] CreateProductRequest dto)
         {
             var product = await _productService.UpdateProductAsync(id, dto);
             if (!product)

@@ -35,7 +35,7 @@ namespace QUickDish.API.Repos
         {
             return await _context.Users.AnyAsync(u => u.Email.ToLower() == email.ToLower()); //AnyAsync verifica daca exista 
         }
-        public async Task<User?> CreateUserAsync(RegisterUserDto dto)
+        public async Task<User?> CreateUserAsync(RegisterUserRequest dto)
         {
             if (await EmailExistAsync(dto.Email.ToLower()))
                 return null;
@@ -64,7 +64,7 @@ namespace QUickDish.API.Repos
 
             }
         }
-        public async Task<bool> UpdateUserAsync(int id, UserUpdateDto dto)
+        public async Task<bool> UpdateUserAsync(int id, UserUpdateRequest dto)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
@@ -87,6 +87,17 @@ namespace QUickDish.API.Repos
             var result = BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
             if (!result) return null;
             return user;
+        }
+
+        internal async Task<bool> ChangePasswordAsync(string email, string newPassword)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+            if (user == null)
+                return false;
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

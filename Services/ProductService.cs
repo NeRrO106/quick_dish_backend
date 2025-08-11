@@ -27,7 +27,7 @@ namespace QUickDish.API.Services
             return await _productRepository.GetProductByNameAsync(name);
         }
 
-        public async Task<Product> CreateProductAsync(CreateProductDto dto)
+        public async Task<Product> CreateProductAsync(CreateProductRequest dto)
         {
             return await _productRepository.CreateProductAsync(dto);
         }
@@ -35,7 +35,7 @@ namespace QUickDish.API.Services
         {
             await _productRepository.DeleteProductAsync(id);
         }
-        public async Task<bool> UpdateProductAsync(int id, CreateProductDto dto)
+        public async Task<bool> UpdateProductAsync(int id, CreateProductRequest dto)
         {
             return await _productRepository.UpdateProductAsync(id, dto);
         }

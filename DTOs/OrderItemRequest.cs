@@ -1,6 +1,6 @@
 ﻿namespace QUickDish.API.DTOs
 {
-    public class OrderItemDTO
+    public class OrderItemRequest
     {
         public string? ProductName { get; set; }
         public string? ProductDescription { get; set; }

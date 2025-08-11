@@ -14,11 +14,11 @@ namespace QUickDish.API.Repos
             _context = context;
         }
 
-        public async Task<List<OrderResponseDTO>> GetOrdersAsync()
+        public async Task<List<OrderResponse>> GetOrdersAsync()
         {
             return await _context.Orders
                 .Include(o => o.Items)
-                .Select(o => new OrderResponseDTO
+                .Select(o => new OrderResponse
                 {
                     Id = o.Id,
                     UserName = _context.Users
@@ -32,7 +32,7 @@ namespace QUickDish.API.Repos
                     Address = o.Address,
                     TotalAmount = o.TotalAmount,
                     Status = o.Status,
-                    Items = o.Items.Select(i => new OrderItemDTO
+                    Items = o.Items.Select(i => new OrderItemRequest
                     {
                         ProductName = _context.Products
                         .Where(p => p.Id == i.ProductId)
@@ -50,12 +50,12 @@ namespace QUickDish.API.Repos
                 .ToListAsync();
         }
 
-        public async Task<OrderResponseDTO?> GetOrdersByIdAsync(int id)
+        public async Task<OrderResponse?> GetOrdersByIdAsync(int id)
         {
             return await _context.Orders
                 .Include(o => o.Items)
                 .Where(o => o.Id == id)
-                .Select(o => new OrderResponseDTO
+                .Select(o => new OrderResponse
                 {
                     Id = o.Id,
                     UserName = _context.Users
@@ -69,7 +69,7 @@ namespace QUickDish.API.Repos
                     Address = o.Address,
                     TotalAmount = o.TotalAmount,
                     Status = o.Status,
-                    Items = o.Items.Select(i => new OrderItemDTO
+                    Items = o.Items.Select(i => new OrderItemRequest
                     {
                         ProductName = _context.Products
                         .Where(p => p.Id == i.ProductId)
@@ -87,11 +87,11 @@ namespace QUickDish.API.Repos
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<List<OrderResponseDTO>> GetOrdersByUserIdAsync(int userId)
+        public async Task<List<OrderResponse>> GetOrdersByUserIdAsync(int userId)
         {
             return await _context.Orders
                 .Where(o => o.UserId == userId)
-                .Select(o => new OrderResponseDTO
+                .Select(o => new OrderResponse
                 {
                     Id = o.Id,
                     UserName = _context.Users
@@ -105,7 +105,7 @@ namespace QUickDish.API.Repos
                     Address = o.Address,
                     TotalAmount = o.TotalAmount,
                     Status = o.Status,
-                    Items = o.Items.Select(i => new OrderItemDTO
+                    Items = o.Items.Select(i => new OrderItemRequest
                     {
                         ProductName = _context.Products
                         .Where(p => p.Id == i.ProductId)

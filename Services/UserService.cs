@@ -33,7 +33,7 @@ namespace QUickDish.API.Services
         {
             return await _userRepo.EmailExistAsync(email);
         }
-        public async Task<User?> CreateUserAsync(RegisterUserDto dto)
+        public async Task<User?> CreateUserAsync(RegisterUserRequest dto)
         {
             return await _userRepo.CreateUserAsync(dto);
         }
@@ -41,9 +41,14 @@ namespace QUickDish.API.Services
         {
             await _userRepo.DeleteUserAsync(id);
         }
-        public async Task<bool> UpdateUserAsync(int id, UserUpdateDto dto)
+        public async Task<bool> UpdateUserAsync(int id, UserUpdateRequest dto)
         {
             return await _userRepo.UpdateUserAsync(id, dto);
+        }
+
+        internal async Task<bool> ChangePasswordAsync(string email, string newPassword)
+        {
+            return await _userRepo.ChangePasswordAsync(email, newPassword);
         }
     }
 }

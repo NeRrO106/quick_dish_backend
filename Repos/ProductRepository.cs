@@ -29,7 +29,7 @@ namespace QUickDish.API.Repos
             return await _context.Products.AnyAsync(p => p.Name == name);
         }
 
-        public async Task<Product> CreateProductAsync(CreateProductDto dto)
+        public async Task<Product> CreateProductAsync(CreateProductRequest dto)
         {
             var product = new Product
             {
@@ -55,7 +55,7 @@ namespace QUickDish.API.Repos
             }
         }
 
-        public async Task<bool> UpdateProductAsync(int id, CreateProductDto dto)
+        public async Task<bool> UpdateProductAsync(int id, CreateProductRequest dto)
         {
             var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
             if (product == null)

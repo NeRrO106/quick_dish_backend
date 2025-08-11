@@ -32,7 +32,7 @@ namespace QUickDish.API.Controllers
             return Ok(user);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] RegisterUserDto dto)
+        public async Task<IActionResult> CreateUser([FromBody] RegisterUserRequest dto)
         {
             if (dto == null)
                 return BadRequest("Invalid user data.");
@@ -41,7 +41,7 @@ namespace QUickDish.API.Controllers
         }
         //[Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateDto dto)
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateRequest dto)
         {
             var user = await _userService.UpdateUserAsync(id, dto);
             if (!user)

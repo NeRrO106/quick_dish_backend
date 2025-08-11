@@ -1,6 +1,6 @@
 ﻿namespace QUickDish.API.DTOs
 {
-    public class OrderResponseDTO
+    public class OrderResponse
     {
         public int Id { get; set; }
         public string? UserName { get; set; }
@@ -9,6 +9,6 @@
         public decimal TotalAmount { get; set; }
         public string Status { get; set; }
 
-        public List<OrderItemDTO> Items { get; set; }
+        public List<OrderItemRequest> Items { get; set; }
     }
 }

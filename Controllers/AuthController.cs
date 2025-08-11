@@ -98,8 +98,8 @@ namespace QUickDish.API.Controllers
 
             }
         }
-        [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword([FromBody] string Email)
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] string Email)
         {
             if (string.IsNullOrEmpty(Email))
                 return BadRequest("Invalid request");
@@ -117,6 +117,19 @@ namespace QUickDish.API.Controllers
             );
             return Ok("Code send");
 
+        }
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest dto)
+        {
+            if (string.IsNullOrEmpty(dto.Email) || string.IsNullOrEmpty(dto.Code) || string.IsNullOrEmpty(dto.NewPassword))
+                return BadRequest("Invalid request");
+            if (!_cache.TryGetValue(dto.Email, out string? cachedCode) || cachedCode != dto.Code)
+                return BadRequest("Invalid code or code expired");
+            var result = await _userService.ChangePasswordAsync(dto.Email, dto.NewPassword);
+            if (!result)
+                return BadRequest("Failed to reset password");
+            _cache.Remove(dto.Email);
+            return Ok("Password reset successfully");
         }
     }
 }

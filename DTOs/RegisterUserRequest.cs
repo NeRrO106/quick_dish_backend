@@ -1,6 +1,6 @@
 ﻿namespace QUickDish.API.DTOs
 {
-    public class RegisterUserDto
+    public class RegisterUserRequest
     {
         public string Name { get; set; }
         public string Email { get; set; }
