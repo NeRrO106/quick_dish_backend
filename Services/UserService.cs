@@ -23,7 +23,8 @@ namespace QUickDish.API.Services
         }
         public async Task<User?> GetUserByNameAsync(string name)
         {
-            return await _userRepo.GetUserByNameAsync(name);
+            string lowerName = name.ToLower();
+            return await _userRepo.GetUserByNameAsync(lowerName);
         }
         public async Task<string?> GetUserRoleAsync(int id)
         {
@@ -31,7 +32,8 @@ namespace QUickDish.API.Services
         }
         public async Task<bool> EmailExistAsync(string email)
         {
-            return await _userRepo.EmailExistAsync(email);
+            string lowerEmail = email.ToLower();
+            return await _userRepo.EmailExistAsync(lowerEmail);
         }
         public async Task<User?> CreateUserAsync(RegisterUserRequest dto)
         {
@@ -83,7 +85,7 @@ namespace QUickDish.API.Services
 
         public async Task<bool> ChangePasswordAsync(string email, string newPassword)
         {
-            var user = await _userRepo.GetUserByEmailAsync(email);
+            var user = await _userRepo.GetUserByEmailAsync(email.ToLower());
             if (user == null)
                 return false;
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);

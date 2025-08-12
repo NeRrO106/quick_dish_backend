@@ -21,11 +21,11 @@ namespace QUickDish.API.Repos
         }
         public async Task<User?> GetUserByNameAsync(string name)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Name.ToLower() == name.ToLower());
+            return await _context.Users.FirstOrDefaultAsync(u => u.Name.ToLower() == name);
         }
         public async Task<User?> GetUserByEmailAsync(string email)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email);
         }
 
         public async Task<string?> GetUserRoleAsync(int id)
@@ -37,7 +37,7 @@ namespace QUickDish.API.Repos
         }
         public async Task<bool> EmailExistAsync(string email)
         {
-            return await _context.Users.AnyAsync(u => u.Email.ToLower() == email.ToLower()); //AnyAsync verifica daca exista 
+            return await _context.Users.AnyAsync(u => u.Email == email); //AnyAsync verifica daca exista 
         }
 
         public async Task CreateUserAsync(User user)
