@@ -31,6 +31,7 @@ namespace QUickDish.API.Controllers
                 return NotFound("Product not found.");
             return Ok(user);
         }
+
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] RegisterUserRequest dto)
         {

@@ -35,20 +35,60 @@ namespace QUickDish.API.Services
         }
         public async Task<User?> CreateUserAsync(RegisterUserRequest dto)
         {
-            return await _userRepo.CreateUserAsync(dto);
+            if (await _userRepo.EmailExistAsync(dto.Email.ToLower()))
+                return null;
+            var user_exist = await _userRepo.GetUserByNameAsync(dto.Name.ToLower());
+            if (user_exist != null)
+                return null;
+            var user = new User
+            {
+                Name = dto.Name,
+                Email = dto.Email.ToLower(),
+                Role = "Client",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                CreatedAt = DateTime.UtcNow
+            };
+            await _userRepo.CreateUserAsync(user);
+            return user;
         }
         public async Task DeleteUserAsync(int id)
         {
-            await _userRepo.DeleteUserAsync(id);
+            var user = await _userRepo.GetUserByIdAsync(id);
+            if (user != null)
+            {
+                await _userRepo.DeleteUserAsync(user);
+            }
         }
         public async Task<bool> UpdateUserAsync(int id, UserUpdateRequest dto)
         {
-            return await _userRepo.UpdateUserAsync(id, dto);
+            var user = await _userRepo.GetUserByIdAsync(id);
+            if (user == null)
+                return false;
+            if (!string.IsNullOrEmpty(dto.Name))
+                user.Name = dto.Name;
+            if (!string.IsNullOrEmpty(dto.Email) && dto.Email != user.Email)
+            {
+                if (await _userRepo.EmailExistAsync(dto.Email.ToLower()))
+                    return false;
+                user.Email = dto.Email.ToLower();
+            }
+            if (!string.IsNullOrEmpty(dto.Role))
+                user.Role = dto.Role;
+            if (!string.IsNullOrEmpty(dto.PasswordHash))
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.PasswordHash);
+
+            await _userRepo.UpdateUserAsync(user);
+            return true;
         }
 
-        internal async Task<bool> ChangePasswordAsync(string email, string newPassword)
+        public async Task<bool> ChangePasswordAsync(string email, string newPassword)
         {
-            return await _userRepo.ChangePasswordAsync(email, newPassword);
+            var user = await _userRepo.GetUserByEmailAsync(email);
+            if (user == null)
+                return false;
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            await _userRepo.UpdateUserAsync(user);
+            return true;
         }
     }
 }

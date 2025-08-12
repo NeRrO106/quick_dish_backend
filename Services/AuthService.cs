@@ -15,7 +15,11 @@ namespace QUickDish.API.Services
 
         public async Task<User?> AuthenticateUserAsync(LoginRequest dto)
         {
-            return await _userRepository.AuthenticateUserAsync(dto);
+            var user = await _userRepository.GetUserByNameAsync(dto.Name);
+            if (user == null) return null;
+            var result = BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
+            if (!result) return null;
+            return user;
         }
     }
 }

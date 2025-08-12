@@ -79,8 +79,6 @@ namespace QUickDish.API
                     options.ExpireTimeSpan = TimeSpan.FromHours(2);
                     options.SlidingExpiration = true;
                     options.Cookie.HttpOnly = false;
-                    options.Cookie.SameSite = SameSiteMode.Lax;
-                    options.Cookie.SecurePolicy = CookieSecurePolicy.None;
 
                     options.Events = new CookieAuthenticationEvents
                     {

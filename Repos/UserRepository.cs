@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QUickDish.API.Data;
-using QUickDish.API.DTOs;
 using QUickDish.API.Models;
 
 namespace QUickDish.API.Repos
@@ -24,6 +23,11 @@ namespace QUickDish.API.Repos
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Name.ToLower() == name.ToLower());
         }
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+        }
+
         public async Task<string?> GetUserRoleAsync(int id)
         {
             return await _context.Users
@@ -35,69 +39,21 @@ namespace QUickDish.API.Repos
         {
             return await _context.Users.AnyAsync(u => u.Email.ToLower() == email.ToLower()); //AnyAsync verifica daca exista 
         }
-        public async Task<User?> CreateUserAsync(RegisterUserRequest dto)
+
+        public async Task CreateUserAsync(User user)
         {
-            if (await EmailExistAsync(dto.Email.ToLower()))
-                return null;
-            var user_exist = await GetUserByNameAsync(dto.Name.ToLower());
-            if (user_exist != null)
-                return null;
-            var user = new User
-            {
-                Name = dto.Name,
-                Email = dto.Email.ToLower(),
-                Role = "Client",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                CreatedAt = DateTime.UtcNow
-            };
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-            return user;
         }
-        public async Task DeleteUserAsync(int id)
+        public async Task DeleteUserAsync(User user)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-            if (user != null)
-            {
-                _context.Users.Remove(user);
-                await _context.SaveChangesAsync();
-
-            }
-        }
-        public async Task<bool> UpdateUserAsync(int id, UserUpdateRequest dto)
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-            if (user == null)
-                return false;
-            if (!string.IsNullOrEmpty(dto.Name))
-                user.Name = dto.Name;
-            if (!string.IsNullOrEmpty(dto.Email))
-                user.Email = dto.Email;
-            if (!string.IsNullOrEmpty(dto.Role))
-                user.Role = dto.Role;
-            if (!string.IsNullOrEmpty(dto.PasswordHash))
-                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.PasswordHash);
+            _context.Users.Remove(user);
             await _context.SaveChangesAsync();
-            return true;
         }
-        public async Task<User?> AuthenticateUserAsync(LoginRequest dto)
+        public async Task UpdateUserAsync(User user)
         {
-            var user = await GetUserByNameAsync(dto.Name);
-            if (user == null) return null;
-            var result = BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
-            if (!result) return null;
-            return user;
-        }
-
-        internal async Task<bool> ChangePasswordAsync(string email, string newPassword)
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
-            if (user == null)
-                return false;
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
-            return true;
         }
     }
 }
