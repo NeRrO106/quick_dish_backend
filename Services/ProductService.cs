@@ -27,17 +27,46 @@ namespace QUickDish.API.Services
             return await _productRepository.GetProductByNameAsync(name);
         }
 
-        public async Task<Product> CreateProductAsync(CreateProductRequest dto)
+        public async Task<Product?> CreateProductAsync(CreateProductRequest dto)
         {
-            return await _productRepository.CreateProductAsync(dto);
+            if (string.IsNullOrEmpty(dto.Name) || dto.Price <= 0 || string.IsNullOrEmpty(dto.Category) || string.IsNullOrEmpty(dto.Description))
+                return null;
+            var product = new Product
+            {
+                Name = dto.Name,
+                Description = dto.Description,
+                Category = dto.Category,
+                Price = dto.Price,
+                ImageUrl = dto.ImageUrl
+            };
+            await _productRepository.CreateProductAsync(product);
+            return product;
         }
         public async Task DeleteProductAsync(int id)
         {
-            await _productRepository.DeleteProductAsync(id);
+            var product = await _productRepository.GetProductByIdAsync(id);
+            if (product != null)
+            {
+                await _productRepository.DeleteProductAsync(product);
+            }
         }
         public async Task<bool> UpdateProductAsync(int id, CreateProductRequest dto)
         {
-            return await _productRepository.UpdateProductAsync(id, dto);
+            var product = await _productRepository.GetProductByIdAsync(id);
+            if (product == null)
+                return false;
+            if (!string.IsNullOrEmpty(dto.Name))
+                product.Name = dto.Name;
+            if (!string.IsNullOrEmpty(dto.Description))
+                product.Description = dto.Description;
+            if (!string.IsNullOrEmpty(dto.Category))
+                product.Category = dto.Category;
+            if (dto.Price > 0)
+                product.Price = dto.Price;
+            if (!string.IsNullOrEmpty(dto.ImageUrl))
+                product.ImageUrl = dto.ImageUrl;
+            await _productRepository.UpdateProductAsync(product);
+            return true;
         }
     }
 }
