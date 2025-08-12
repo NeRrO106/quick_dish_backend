@@ -29,6 +29,7 @@ namespace QUickDish.API.Controllers
         public async Task<IActionResult> LoginUser([FromBody] LoginRequest dto)
         {
             var user = await _authServices.AuthenticateUserAsync(dto);
+
             if (user == null)
                 return Unauthorized("Invalid credential");
             var claims = new List<Claim>
