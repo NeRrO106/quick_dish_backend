@@ -1,5 +1,3 @@
-
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using QUickDish.API.Data;
 using QUickDish.API.Repos;
@@ -30,7 +28,6 @@ namespace QUickDish.API
             app.UseAuthentication();
             app.UseAuthorization();
 
-
             app.MapControllers();
 
             app.Run();
@@ -52,12 +49,10 @@ namespace QUickDish.API
             services.AddScoped<OrderService>();
             services.AddScoped<AuthService>();
 
-
             services.AddSingleton<EmailService>();
 
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlite("Data Source = quick_dish.db"));
-
 
             services.AddCors(options =>
             {
@@ -69,7 +64,6 @@ namespace QUickDish.API
                         .AllowAnyHeader()
                         .AllowCredentials();
                     });
-
             });
 
             services.AddAuthentication("CookieAuth")
@@ -79,20 +73,6 @@ namespace QUickDish.API
                     options.ExpireTimeSpan = TimeSpan.FromHours(2);
                     options.SlidingExpiration = true;
                     options.Cookie.HttpOnly = false;
-
-                    options.Events = new CookieAuthenticationEvents
-                    {
-                        OnRedirectToLogin = context =>
-                        {
-                            if (context.Request.Path.StartsWithSegments("/api"))
-                            {
-                                context.Response.StatusCode = 401;
-                                return Task.CompletedTask;
-                            }
-                            context.Response.Redirect(context.RedirectUri);
-                            return Task.CompletedTask;
-                        }
-                    };
                 });
         }
     }
