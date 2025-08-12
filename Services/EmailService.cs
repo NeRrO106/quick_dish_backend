@@ -11,10 +11,7 @@ namespace QUickDish.API.Services
         private readonly string _smtpPass = "wcji tnqt hhdr qyms";
         private readonly string _fromEmail = "contact.quickdish@gmail.com";
 
-        public EmailService()
-        {
-
-        }
+        public EmailService() { }
         public async Task SendEmailAsync(string toEmail, string subject, string body)
         {
             using var client = new SmtpClient(_smtpHost, _smtpPort)

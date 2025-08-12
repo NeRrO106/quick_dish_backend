@@ -123,39 +123,29 @@ namespace QUickDish.API.Repos
                 .ToListAsync();
         }
 
-        public async Task<Order> CreateOrder(Order order)
+        public async Task<Order?> GetOrderByIdAsync(int id)
         {
-            if (order == null || order.Items == null || !order.Items.Any())
-                throw new ArgumentException("Order must contain at least one item");
-            order.CreatedAt = DateTime.Now;
-            order.TotalAmount = order.Items.Sum(item => item.TotalPrice);
+            return await _context.Orders
+                .Include(o => o.Items)
+                .FirstOrDefaultAsync(o => o.Id == id);
+        }
+
+        public async Task CreateOrder(Order order)
+        {
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
-            return order;
         }
 
-        public async Task<bool> UpdateOrder(int id, OrderUpdateRequest dto)
+        public async Task UpdateOrder(Order order)
         {
-            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == id);
-            if (order == null)
-                return false;
-            if (dto.CourierID.HasValue)
-                order.CourierId = dto.CourierID.Value;
-            if (!string.IsNullOrEmpty(dto.Status))
-                order.Status = dto.Status;
+            _context.Orders.Update(order);
             await _context.SaveChangesAsync();
-            return true;
         }
 
-        public async Task DeleteOrder(int id)
+        public async Task DeleteOrder(Order order)
         {
-            var order = await _context.Orders.FindAsync(id);
-            if (order != null)
-            {
-                _context.Orders.Remove(order);
-                await _context.SaveChangesAsync();
-            }
-
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -30,16 +30,34 @@ namespace QUickDish.API.Services
 
         public async Task<Order?> CreateOrder(Order order)
         {
-            return await _orderRepository.CreateOrder(order);
+            if (order == null || order.Items == null || !order.Items.Any())
+                throw new ArgumentException("Order must contain at least one item");
+            order.CreatedAt = DateTime.Now;
+            order.TotalAmount = order.Items.Sum(item => item.TotalPrice);
+
+            await _orderRepository.CreateOrder(order);
+            return order;
         }
         public async Task<bool> UpdateOrder(int id, OrderUpdateRequest dto)
         {
-            return await _orderRepository.UpdateOrder(id, dto);
+            var order = await _orderRepository.GetOrderByIdAsync(id);
+            if (order == null)
+                return false;
+            if (dto.CourierID.HasValue)
+                order.CourierId = dto.CourierID.Value;
+            if (!string.IsNullOrEmpty(dto.Status))
+                order.Status = dto.Status;
+            await _orderRepository.UpdateOrder(order);
+            return true;
         }
 
         public async Task DeleteOrder(int id)
         {
-            await _orderRepository.DeleteOrder(id);
+            var order = await _orderRepository.GetOrderByIdAsync(id);
+            if (order != null)
+            {
+                await _orderRepository.DeleteOrder(order);
+            }
         }
     }
 }
