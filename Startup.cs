@@ -69,7 +69,7 @@ namespace QUickDish.API
             services.AddAuthentication("CookieAuth")
                 .AddCookie("CookieAuth", options =>
                 {
-                    options.Cookie.Name = "AuthCookie";
+                    options.Cookie.Name = "CookieAuth";
                     options.ExpireTimeSpan = TimeSpan.FromHours(2);
                     options.SlidingExpiration = true;
                     options.Cookie.HttpOnly = false;
