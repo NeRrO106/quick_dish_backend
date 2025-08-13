@@ -46,7 +46,7 @@ namespace QUickDish.API.Services
             {
                 Name = dto.Name,
                 Email = dto.Email.ToLower(),
-                Role = "Client",
+                Role = dto.Role ?? "Client",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 CreatedAt = DateTime.UtcNow
             };
