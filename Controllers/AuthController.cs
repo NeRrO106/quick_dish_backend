@@ -49,7 +49,13 @@ namespace QUickDish.API.Controllers
                 ExpiresUtc = DateTime.UtcNow.AddHours(2)
             });
 
-            return Ok("Login succesful");
+            return Ok(new
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                Role = user.Role
+            });
         }
         [HttpPost("login-ghost")]
         public async Task<IActionResult> LoginGuest()
