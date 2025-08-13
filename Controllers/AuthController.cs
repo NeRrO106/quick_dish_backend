@@ -16,8 +16,6 @@ namespace QUickDish.API.Controllers
         private readonly UserService _userService;
         private readonly IMemoryCache _cache;
 
-        private Random _random = new Random();
-
         public AuthController(AuthService authServices, EmailService emailService, IMemoryCache cache, UserService userService)
         {
             _authServices = authServices;
@@ -25,6 +23,8 @@ namespace QUickDish.API.Controllers
             _userService = userService;
             _cache = cache;
         }
+
+
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] LoginRequest dto)
         {
@@ -57,6 +57,7 @@ namespace QUickDish.API.Controllers
                 Role = user.Role
             });
         }
+
         [HttpPost("login-ghost")]
         public async Task<IActionResult> LoginGuest()
         {
@@ -79,6 +80,7 @@ namespace QUickDish.API.Controllers
 
             return Ok("Login succesful as a ghost");
         }
+
         [HttpPost("logout")]
         public async Task<IActionResult> LogOut()
         {
@@ -86,25 +88,6 @@ namespace QUickDish.API.Controllers
             return Ok("SignOut");
         }
 
-        [HttpGet("send")]
-        public async Task<IActionResult> SendEmail()
-        {
-            try
-            {
-                await _emailService.SendEmailAsync(
-                    "andreilimit66@gmail.com",
-                    "\"Test Email from QuickDish\"",
-                     "<h1>Hello from QuickDish</h1><p>This is a test email sent from the QuickDish application.</p>"
-                );
-                return Ok("Email sent successfully.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Failed to send email: {ex.Message}");
-
-
-            }
-        }
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] string Email)
         {
@@ -113,6 +96,7 @@ namespace QUickDish.API.Controllers
             var user = await _userService.EmailExistAsync(Email.ToLower());
             if (!user)
                 return NotFound("User not found");
+            Random _random = new Random();
             var code = _random.Next(100000, 999999).ToString();
 
             _cache.Set(Email, code, TimeSpan.FromMinutes(10));
@@ -125,6 +109,7 @@ namespace QUickDish.API.Controllers
             return Ok("Code send");
 
         }
+
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest dto)
         {
