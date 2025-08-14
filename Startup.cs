@@ -77,6 +77,18 @@ namespace QUickDish.API
                     options.Cookie.HttpOnly = false;
                 });
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+                options.AddPolicy("RequireUserRole", policy => policy.RequireRole("User"));
+                options.AddPolicy("RequireCourierRole", policy => policy.RequireRole("Courier"));
+                options.AddPolicy("RequiredManagerRole", policy => policy.RequireRole("Manager"));
+                options.AddPolicy("RequiredAdminOrManagerOrCourierRole", policy =>
+                    policy.RequireRole("Admin", "Manager", "Courier"));
+                options.AddPolicy("RequiredAdminOrManagerRole", policy =>
+                    policy.RequireRole("Admin", "Manager"));
+            });
+
             services.AddControllers()
                 .AddJsonOptions(options =>
                 {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QUickDish.API.DTOs;
 using QUickDish.API.Services;
 
@@ -16,6 +17,8 @@ namespace QUickDish.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
+
         public async Task<IActionResult> GetAllProducts()
         {
             var products = await _productService.GetAllProductsAsync();
@@ -23,6 +26,7 @@ namespace QUickDish.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetProductById(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
@@ -32,6 +36,7 @@ namespace QUickDish.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "RequiredAdminOrManagerRole")]
         public async Task<IActionResult> CreateProduct([FromBody] CreateProductRequest dto)
         {
             if (dto == null)
@@ -43,6 +48,7 @@ namespace QUickDish.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Policy = "RequiredAdminOrManagerRole")]
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] CreateProductRequest dto)
         {
             var product = await _productService.UpdateProductAsync(id, dto);
@@ -51,6 +57,7 @@ namespace QUickDish.API.Controllers
             return Ok(product);
         }
         [HttpDelete("{id}")]
+        [Authorize(Policy = "RequiredAdminOrManagerRole")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             await _productService.DeleteProductAsync(id);

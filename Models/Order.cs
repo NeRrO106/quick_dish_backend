@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QUickDish.API.Models
 {
@@ -7,10 +6,8 @@ namespace QUickDish.API.Models
     {
         public int Id { get; set; }
 
-        [JsonIgnore]
         public int UserId { get; set; }
 
-        [JsonIgnore]
         public int? CourierId { get; set; }
 
         public string Address { get; set; } = string.Empty;

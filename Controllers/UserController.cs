@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QUickDish.API.DTOs;
 using QUickDish.API.Services;
 
@@ -14,14 +15,15 @@ namespace QUickDish.API.Controllers
         {
             _userService = userService;
         }
-        //[Authorize(Roles = "Admin")]
         [HttpGet]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _userService.GetAllUsersAsync();
             return Ok(users);
         }
         [HttpGet("{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> GetUserById(int id)
         {
             var user = await _userService.GetUserByIdAsync(id);
@@ -38,8 +40,8 @@ namespace QUickDish.API.Controllers
             var user = await _userService.CreateUserAsync(dto);
             return Ok(user);
         }
-        //[Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateRequest dto)
         {
             var user = await _userService.UpdateUserAsync(id, dto);
@@ -47,13 +49,12 @@ namespace QUickDish.API.Controllers
                 return NotFound("User not found.");
             return Ok(user);
         }
-        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             await _userService.DeleteUserAsync(id);
             return Ok("User deleted successfully.");
-
         }
     }
 }

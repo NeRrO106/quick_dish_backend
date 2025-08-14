@@ -88,7 +88,7 @@ namespace QUickDish.API.Controllers
             return Ok("SignOut");
         }
 
-        [HttpPost("forgot-password")]
+        [HttpPost("forgotpassword")]
         public async Task<IActionResult> ForgotPassword([FromBody] string Email)
         {
             if (string.IsNullOrEmpty(Email))
@@ -110,7 +110,7 @@ namespace QUickDish.API.Controllers
 
         }
 
-        [HttpPost("reset-password")]
+        [HttpPost("resetpassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest dto)
         {
             if (string.IsNullOrEmpty(dto.Email) || string.IsNullOrEmpty(dto.Code) || string.IsNullOrEmpty(dto.NewPassword))

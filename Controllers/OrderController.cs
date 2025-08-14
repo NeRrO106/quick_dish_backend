@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QUickDish.API.DTOs;
 using QUickDish.API.Models;
 using QUickDish.API.Services;
@@ -16,6 +17,7 @@ namespace QUickDish.API.Controllers
             _orderService = orderService;
         }
         [HttpGet]
+        [Authorize(Policy = "RequiredAdminOrManagerOrCourierRole")]
         public async Task<IActionResult> GetOrders()
         {
             var orders = await _orderService.GetOrdersAsync();
@@ -23,6 +25,7 @@ namespace QUickDish.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "RequiredAdminOrManagerOrCourierRole")]
         public async Task<IActionResult> GetOrdersById(int id)
         {
             var order = await _orderService.GetOrdersByIdAsync(id);
@@ -30,12 +33,14 @@ namespace QUickDish.API.Controllers
         }
 
         [HttpGet("orders/{userId}")]
+        [Authorize]
         public async Task<IActionResult> GetOrdersByUserId(int userId)
         {
             var order = await _orderService.GetOrdersByUserIdAsync(userId);
             return Ok(order);
         }
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateOrder([FromBody] Order order)
         {
             if (order == null)
@@ -45,6 +50,7 @@ namespace QUickDish.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Policy = "RequiredAdminOrManagerRole")]
         public async Task<IActionResult> UpdateOrder(int id, [FromBody] OrderUpdateRequest dto)
         {
             var order = await _orderService.UpdateOrder(id, dto);
@@ -55,6 +61,7 @@ namespace QUickDish.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteOrder(int id)
         {
             await _orderService.DeleteOrder(id);
