@@ -105,6 +105,15 @@ namespace QUickDish.API
                                                      c.Value == "Manager"))
                     );
                 });
+                options.AddPolicy("RequiredAdminOrManagerOrUserRole", policy =>
+                {
+                    policy.RequireAssertion(context =>
+                        context.User.HasClaim(c => c.Type == ClaimTypes.Role &&
+                                                    (c.Value == "Admin" ||
+                                                     c.Value == "Manager" ||
+                                                     c.Value == "Client"))
+                    );
+                });
             });
             services.AddControllers()
                 .AddJsonOptions(options =>

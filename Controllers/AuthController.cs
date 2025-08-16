@@ -58,15 +58,15 @@ namespace QUickDish.API.Controllers
             });
         }
 
-        [HttpPost("login-ghost")]
+        [HttpPost("loginguest")]
         public async Task<IActionResult> LoginGuest()
         {
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Name, "Ghost"),
-                new Claim(ClaimTypes.Email, "ghost@ghost.com"),
-                new Claim(ClaimTypes.Role, "Ghost"),
+                new Claim(ClaimTypes.Name, "Guest"),
+                new Claim(ClaimTypes.Email, ""),
+                new Claim(ClaimTypes.Role, "Guest"),
             };
 
             var identity = new ClaimsIdentity(claims, "CookieAuth");
@@ -78,7 +78,7 @@ namespace QUickDish.API.Controllers
                 ExpiresUtc = DateTime.UtcNow.AddHours(2)
             });
 
-            return Ok("Login succesful as a ghost");
+            return Ok();
         }
 
         [HttpPost("logout")]
