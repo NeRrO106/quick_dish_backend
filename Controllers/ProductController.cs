@@ -18,7 +18,6 @@ namespace QUickDish.API.Controllers
 
         [HttpGet]
         [Authorize]
-
         public async Task<IActionResult> GetAllProducts()
         {
             var products = await _productService.GetAllProductsAsync();
@@ -26,7 +25,7 @@ namespace QUickDish.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize]
+        [Authorize(Policy = "RequireUserRole")]
         public async Task<IActionResult> GetProductById(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);

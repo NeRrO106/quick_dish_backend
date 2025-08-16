@@ -33,14 +33,14 @@ namespace QUickDish.API.Controllers
         }
 
         [HttpGet("orders/{userId}")]
-        [Authorize]
+        [Authorize(Policy = "RequireUserRole")]
         public async Task<IActionResult> GetOrdersByUserId(int userId)
         {
             var order = await _orderService.GetOrdersByUserIdAsync(userId);
             return Ok(order);
         }
         [HttpPost]
-        [Authorize]
+        [Authorize(Policy = "RequireUserRole")]
         public async Task<IActionResult> CreateOrder([FromBody] Order order)
         {
             if (order == null)
