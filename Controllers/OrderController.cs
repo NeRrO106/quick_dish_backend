@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using QUickDish.API.DTOs;
 using QUickDish.API.Models;
 using QUickDish.API.Services;
@@ -11,10 +12,16 @@ namespace QUickDish.API.Controllers
     public class OrderController : Controller
     {
         private readonly OrderService _orderService;
+        private readonly EmailService _emailService;
+        private readonly IMemoryCache _memoryCache;
+        private readonly UserService _userService;
 
-        public OrderController(OrderService orderService)
+        public OrderController(OrderService orderService, EmailService emailService, IMemoryCache memoryCache, UserService userService)
         {
             _orderService = orderService;
+            _emailService = emailService;
+            _memoryCache = memoryCache;
+            _userService = userService;
         }
         [HttpGet]
         [Authorize(Policy = "RequiredAdminOrManagerOrCourierRole")]
@@ -45,19 +52,69 @@ namespace QUickDish.API.Controllers
         {
             if (order == null)
                 return BadRequest("Invalid order data");
-            var user = await _orderService.CreateOrder(order);
-            return Ok(user);
+
+            Random _random = new Random();
+            var code = _random.Next(100000, 999999).ToString();
+
+            await _orderService.CreateOrder(order);
+
+            var user = await _userService.GetUserByIdAsync(order.UserId);
+
+            if (user != null)
+            {
+                _memoryCache.Set($"order_{order.Id}", code, TimeSpan.FromMinutes(10));
+                await _emailService.SendEmailAsync(
+                    user.Email,
+                    "Comanda ta a fost plasata!",
+                    $"<h1>Salut {user.Name}</h1><p>Comanda ta a fost plasata cu succes. Cod comanda: <strong>{code}</strong></p>"
+                );
+
+            }
+            return Ok();
         }
 
         [HttpPut("{id}")]
         [Authorize(Policy = "RequiredAdminOrManagerRole")]
         public async Task<IActionResult> UpdateOrder(int id, [FromBody] OrderUpdateRequest dto)
         {
-            var order = await _orderService.UpdateOrder(id, dto);
-            if (!order)
+            var updatedOrder = await _orderService.UpdateOrder(id, dto);
+            if (!updatedOrder)
                 return NotFound();
-            return Ok(order);
 
+            var order = await _orderService.GetOrdersByIdAsync(id);
+            var user = await _userService.GetUserByIdAsync(order.UserId);
+
+            if (user != null)
+            {
+                string message = $"<h1>Salut {user.Name}</h1>";
+                bool sendEmail = false;
+
+                if (!string.IsNullOrEmpty(dto.Status))
+                {
+                    message += $"Status-ul comenzii tale a fost schimbat la: <strong>{dto.Status}</strong><br/>";
+                    sendEmail = true;
+                }
+                if (dto.CourierID.HasValue && dto.CourierID.Value != order.CourierId)
+                {
+                    var courier = await _userService.GetUserByIdAsync(dto.CourierID.Value);
+                    if (courier != null)
+                    {
+                        message += $"Curierul: <strong>{courier.Name}</strong> a preluat comanda ta.<br/>";
+                        sendEmail = true;
+                    }
+                }
+                message += "</p>";
+
+                if (sendEmail)
+                {
+                    await _emailService.SendEmailAsync(
+                        user.Email,
+                        $"Comanda ta #{order.Id} a fost actualizată",
+                        message
+                    );
+                }
+            }
+            return Ok();
         }
 
         [HttpDelete("{id}")]

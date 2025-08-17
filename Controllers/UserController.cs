@@ -37,6 +37,7 @@ namespace QUickDish.API.Controllers
         {
             if (dto == null)
                 return BadRequest("Invalid user data.");
+
             var user = await _userService.CreateUserAsync(dto);
             return Ok(user);
         }

@@ -41,12 +41,16 @@ namespace QUickDish.API.Services
         public async Task<bool> UpdateOrder(int id, OrderUpdateRequest dto)
         {
             var order = await _orderRepository.GetOrderByIdAsync(id);
+
             if (order == null)
                 return false;
+
             if (dto.CourierID.HasValue)
                 order.CourierId = dto.CourierID.Value;
+
             if (!string.IsNullOrEmpty(dto.Status))
                 order.Status = dto.Status;
+
             await _orderRepository.UpdateOrder(order);
             return true;
         }
