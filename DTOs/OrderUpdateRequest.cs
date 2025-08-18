@@ -4,5 +4,6 @@
     {
         public int? CourierID { get; set; }
         public string? Status { get; set; }
+        public int? Code { get; set; }
     }
 }

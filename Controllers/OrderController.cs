@@ -40,7 +40,7 @@ namespace QUickDish.API.Controllers
         }
 
         [HttpGet("orders/{userId}")]
-        [Authorize(Policy = "RequiredAdminOrManagerOrUserRole")]
+        [Authorize]
         public async Task<IActionResult> GetOrdersByUserId(int userId)
         {
             var order = await _orderService.GetOrdersByUserIdAsync(userId);
@@ -74,7 +74,7 @@ namespace QUickDish.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "RequiredAdminOrManagerRole")]
+        [Authorize(Policy = "RequiredAdminOrManagerOrCourierRole")]
         public async Task<IActionResult> UpdateOrder(int id, [FromBody] OrderUpdateRequest dto)
         {
             var updatedOrder = await _orderService.UpdateOrder(id, dto);
@@ -114,6 +114,12 @@ namespace QUickDish.API.Controllers
                     );
                 }
             }
+            if (dto.Code != null)
+            {
+                if (!_memoryCache.TryGetValue($"order_{order.Id}", out string? cachedCode) || cachedCode != dto.Code.ToString())
+                    return BadRequest("Invalid code or code expired");
+            }
+
             return Ok();
         }
 

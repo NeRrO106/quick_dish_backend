@@ -53,6 +53,7 @@ namespace QUickDish.API
             services.AddScoped<OrderService>();
             services.AddScoped<AuthService>();
 
+            services.AddSingleton<LoginAttemptService>();
             services.AddSingleton<EmailService>();
 
             services.AddDbContext<AppDbContext>(options =>

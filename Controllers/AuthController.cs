@@ -14,24 +14,39 @@ namespace QUickDish.API.Controllers
         private readonly AuthService _authServices;
         private readonly EmailService _emailService;
         private readonly UserService _userService;
+        private readonly LoginAttemptService _loginAttemptService;
         private readonly IMemoryCache _cache;
 
-        public AuthController(AuthService authServices, EmailService emailService, IMemoryCache cache, UserService userService)
+        public AuthController(AuthService authServices, EmailService emailService, IMemoryCache cache, UserService userService, LoginAttemptService loginAttemptService)
         {
             _authServices = authServices;
             _emailService = emailService;
             _userService = userService;
             _cache = cache;
+            _loginAttemptService = loginAttemptService;
         }
 
 
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] LoginRequest dto)
         {
+            var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+            if (_loginAttemptService.IsBlocked(ip))
+            {
+                return BadRequest("Too many failed attempts. Try again later.");
+            }
+
             var user = await _authServices.AuthenticateUserAsync(dto);
 
             if (user == null)
+            {
+                _loginAttemptService.LoginFailedAttempt(ip);
                 return Unauthorized("Invalid credential");
+            }
+
+            _loginAttemptService.ResetedAttempt(ip);
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -115,11 +130,15 @@ namespace QUickDish.API.Controllers
         {
             if (string.IsNullOrEmpty(dto.Email) || string.IsNullOrEmpty(dto.Code) || string.IsNullOrEmpty(dto.NewPassword))
                 return BadRequest("Invalid request");
-            var userExists = await _userService.EmailExistAsync(dto.Email.ToLower());
+
+            var userExists = await _userService.EmailExistAsync(dto.Email);
+
             if (!userExists)
                 return NotFound("User not found");
+
             if (!_cache.TryGetValue(dto.Email, out string? cachedCode) || cachedCode != dto.Code)
                 return BadRequest("Invalid code or code expired");
+
             var result = await _userService.ChangePasswordAsync(dto.Email, dto.NewPassword);
             if (!result)
                 return BadRequest("Failed to reset password");
