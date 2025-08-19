@@ -11,7 +11,7 @@ namespace QUickDish.API.Models
         public int? CourierId { get; set; }
 
         public string Address { get; set; } = string.Empty;
-        public int PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; } = string.Empty;
         public decimal TotalAmount { get; set; }
         public string Status { get; set; } = "Pending";
 

@@ -1,6 +1,7 @@
 ﻿using QUickDish.API.DTOs;
 using QUickDish.API.Models;
 using QUickDish.API.Repos;
+using System.Text.RegularExpressions;
 
 namespace QUickDish.API.Services
 {
@@ -11,6 +12,11 @@ namespace QUickDish.API.Services
         public OrderService(OrderRepository orderRepository)
         {
             _orderRepository = orderRepository;
+        }
+
+        public bool IsValidPhoneNumber(string phoneNumber)
+        {
+            return Regex.IsMatch(phoneNumber, @"^[0-9]{10}$");
         }
 
         public async Task<List<Order>> GetOrdersAsync()
@@ -32,6 +38,7 @@ namespace QUickDish.API.Services
         {
             if (order == null || order.Items == null || !order.Items.Any())
                 throw new ArgumentException("Order must contain at least one item");
+
             order.CreatedAt = DateTime.Now;
             order.TotalAmount = order.Items.Sum(item => item.TotalPrice);
 

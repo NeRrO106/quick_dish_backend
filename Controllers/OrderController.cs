@@ -53,6 +53,9 @@ namespace QUickDish.API.Controllers
             if (order == null)
                 return BadRequest("Invalid order data");
 
+            if (!_orderService.IsValidPhoneNumber(order.PhoneNumber))
+                return BadRequest("Invalid phone number");
+
             Random _random = new Random();
             var code = _random.Next(100000, 999999).ToString();
 
