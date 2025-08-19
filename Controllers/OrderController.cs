@@ -85,6 +85,9 @@ namespace QUickDish.API.Controllers
                 return NotFound();
 
             var order = await _orderService.GetOrdersByIdAsync(id);
+            if (order == null)
+                return NotFound();
+
             var user = await _userService.GetUserByIdAsync(order.UserId);
 
             if (user != null)
@@ -92,11 +95,6 @@ namespace QUickDish.API.Controllers
                 string message = $"<h1>Salut {user.Name}</h1>";
                 bool sendEmail = false;
 
-                if (!string.IsNullOrEmpty(dto.Status))
-                {
-                    message += $"Status-ul comenzii tale a fost schimbat la: <strong>{dto.Status}</strong><br/>";
-                    sendEmail = true;
-                }
                 if (dto.CourierID.HasValue && dto.CourierID.Value != order.CourierId)
                 {
                     var courier = await _userService.GetUserByIdAsync(dto.CourierID.Value);

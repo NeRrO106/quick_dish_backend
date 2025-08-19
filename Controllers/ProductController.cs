@@ -39,8 +39,13 @@ namespace QUickDish.API.Controllers
         {
             if (dto == null)
                 return BadRequest("Invalid product data.");
+
+            if (string.IsNullOrWhiteSpace(dto.Name))
+                return BadRequest("Product name cannot be null or empty.");
+
             if (await _productService.GetProductByNameAsync(dto.Name))
                 return BadRequest("Product with this name already exists.");
+
             var product = await _productService.CreateProductAsync(dto);
             return Ok(product);
         }
