@@ -73,7 +73,7 @@ namespace QUickDish.API.Controllers
             });
         }
 
-        [HttpPost("loginguest")]
+        /*[HttpPost("loginguest")]
         public async Task<IActionResult> LoginGuest()
         {
             var claims = new List<Claim>
@@ -94,7 +94,7 @@ namespace QUickDish.API.Controllers
             });
 
             return Ok();
-        }
+        }*/
 
         [HttpPost("logout")]
         public async Task<IActionResult> LogOut()
