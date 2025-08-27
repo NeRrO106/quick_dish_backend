@@ -52,6 +52,3 @@ QuickDish.API/            # Proxy pentru API .NET
 ---
 📜 License
   Distributed under the MIT License.
-
-```
----
