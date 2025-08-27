@@ -80,12 +80,19 @@ namespace QUickDish.API.Controllers
         [Authorize(Policy = "RequiredAdminOrManagerOrCourierRole")]
         public async Task<IActionResult> UpdateOrder(int id, [FromBody] OrderUpdateRequest dto)
         {
-            var updatedOrder = await _orderService.UpdateOrder(id, dto);
-            if (!updatedOrder)
-                return NotFound();
 
             var order = await _orderService.GetOrdersByIdAsync(id);
             if (order == null)
+                return NotFound();
+
+            if (dto.Code != null)
+            {
+                if (!_memoryCache.TryGetValue($"order_{order.Id}", out string? cachedCode) || cachedCode != dto.Code.ToString())
+                    return BadRequest("Invalid code or code expired");
+            }
+
+            var updatedOrder = await _orderService.UpdateOrder(id, dto);
+            if (!updatedOrder)
                 return NotFound();
 
             var user = await _userService.GetUserByIdAsync(order.UserId);
@@ -114,11 +121,6 @@ namespace QUickDish.API.Controllers
                         message
                     );
                 }
-            }
-            if (dto.Code != null)
-            {
-                if (!_memoryCache.TryGetValue($"order_{order.Id}", out string? cachedCode) || cachedCode != dto.Code.ToString())
-                    return BadRequest("Invalid code or code expired");
             }
 
             return Ok();
