@@ -28,7 +28,7 @@ namespace QUickDish.API.Controllers
         {
             var user = await _userService.GetUserByIdAsync(id);
             if (user == null)
-                return NotFound("Product not found.");
+                return NotFound("User not found.");
             return Ok(user);
         }
 

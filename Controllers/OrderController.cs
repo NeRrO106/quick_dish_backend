@@ -68,8 +68,8 @@ namespace QUickDish.API.Controllers
                 _memoryCache.Set($"order_{order.Id}", code, TimeSpan.FromMinutes(10));
                 await _emailService.SendEmailAsync(
                     user.Email,
-                    "Comanda ta a fost plasata!",
-                    $"<h1>Salut {user.Name}</h1><p>Comanda ta a fost plasata cu succes. Cod comanda: <strong>{code}</strong></p>"
+                    "Your order has been placed!",
+                    $"<h1>Hello {user.Name}</h1><p>Your order has been placed successfully. Order code: <strong>{code}</strong></p>"
                 );
 
             }
@@ -92,7 +92,7 @@ namespace QUickDish.API.Controllers
 
             if (user != null)
             {
-                string message = $"<h1>Salut {user.Name}</h1>";
+                string message = $"<h1>Hello {user.Name}</h1>";
                 bool sendEmail = false;
 
                 if (dto.CourierID.HasValue && dto.CourierID.Value != order.CourierId)
@@ -100,7 +100,7 @@ namespace QUickDish.API.Controllers
                     var courier = await _userService.GetUserByIdAsync(dto.CourierID.Value);
                     if (courier != null)
                     {
-                        message += $"Curierul: <strong>{courier.Name}</strong> a preluat comanda ta.<br/>";
+                        message += $"Courier: <strong>{courier.Name}</strong> has picked up your order.<br/>";
                         sendEmail = true;
                     }
                 }
@@ -110,7 +110,7 @@ namespace QUickDish.API.Controllers
                 {
                     await _emailService.SendEmailAsync(
                         user.Email,
-                        $"Comanda ta #{order.Id} a fost actualizată",
+                        $"Your order #{order.Id} has been updated",
                         message
                     );
                 }
@@ -129,7 +129,7 @@ namespace QUickDish.API.Controllers
         public async Task<IActionResult> DeleteOrder(int id)
         {
             await _orderService.DeleteOrder(id);
-            return Ok();
+            return Ok("Order deleted successfully");
         }
     }
 }

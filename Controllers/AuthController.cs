@@ -34,7 +34,7 @@ namespace QUickDish.API.Controllers
 
             if (_loginAttemptService.IsBlocked(ip))
             {
-                return BadRequest("Too many failed attempts. Try again later.");
+                return BadRequest("Too many failed attempts. Please try again later.");
             }
 
             var user = await _authServices.AuthenticateUserAsync(dto);
@@ -42,7 +42,7 @@ namespace QUickDish.API.Controllers
             if (user == null)
             {
                 _loginAttemptService.LoginFailedAttempt(ip);
-                return Unauthorized("Invalid credential");
+                return Unauthorized("Invalid credentials");
             }
 
             _loginAttemptService.ResetedAttempt(ip);
@@ -100,7 +100,7 @@ namespace QUickDish.API.Controllers
         public async Task<IActionResult> LogOut()
         {
             await HttpContext.SignOutAsync();
-            return Ok("SignOut");
+            return Ok("Signed out successfully");
         }
 
         [HttpPost("forgotpassword")]
@@ -121,7 +121,7 @@ namespace QUickDish.API.Controllers
                 "Password Reset Code",
                 $"<h1>Password Reset Code</h1> <p>Your password reset code is: <strong>{code}</strong></p>"
             );
-            return Ok("Code send");
+            return Ok("Code sent");
 
         }
 
@@ -147,7 +147,7 @@ namespace QUickDish.API.Controllers
             await _emailService.SendEmailAsync(
                 dto.Email,
                 "Password Reset Confirmation",
-                $"<h1>Password Reset Successful</h1> <p>Your password has been reset successfully.</p> <p>Your new password is {dto.NewPassword}</p>"
+                "<h1>Password Reset Successful</h1><p>Your password has been reset successfully.</p>" // eliminat parola din email
             );
 
             return Ok("Password reset successfully");

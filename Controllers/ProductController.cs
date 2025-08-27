@@ -44,7 +44,7 @@ namespace QUickDish.API.Controllers
                 return BadRequest("Product name cannot be null or empty.");
 
             if (await _productService.GetProductByNameAsync(dto.Name))
-                return BadRequest("Product with this name already exists.");
+                return BadRequest("A product with this name already exists.");
 
             var product = await _productService.CreateProductAsync(dto);
             return Ok(product);
@@ -56,7 +56,7 @@ namespace QUickDish.API.Controllers
         {
             var product = await _productService.UpdateProductAsync(id, dto);
             if (!product)
-                return NotFound("User not found.");
+                return NotFound("Product not found.");
             return Ok(product);
         }
         [HttpDelete("{id}")]
