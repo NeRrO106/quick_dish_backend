@@ -5,7 +5,7 @@
  
 ---
 ## 🚀 Tech Stack
-- ⚡ ASP.NET Core – backend performant
+- ⚡ NET Core – backend performant
 - 🗄 Entity Framework Core – ORM pentru baze de date
 - 🔐 Cookie Authentication – gestionare sesiuni și roluri
 - 📦 Swagger/OpenAPI – documentare API

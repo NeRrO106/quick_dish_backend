@@ -2,8 +2,8 @@
 {
     public class ResetPasswordRequest
     {
-        public string Email { get; set; } = string.Empty;
-        public string Code { get; set; } = string.Empty;
-        public string NewPassword { get; set; } = string.Empty;
+        public required string Email { get; set; }
+        public required string Code { get; set; }
+        public required string NewPassword { get; set; }
     }
 }

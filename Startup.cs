@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using QUickDish.API.Data;
 using QUickDish.API.Repos;
 using QUickDish.API.Services;
@@ -16,15 +16,7 @@ namespace QUickDish.API
 
             var app = builder.Build();
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger(c =>
-                {
-                    c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
-                });
-                app.UseSwaggerUI();
-            }
-
+            app.UseSwagger();
             app.UseHttpsRedirection();
 
             app.UseCors("AllowFrontend");
@@ -117,11 +109,15 @@ namespace QUickDish.API
                 });
             });
             services.AddControllers()
-                .AddJsonOptions(options =>
+            .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.PropertyNamingPolicy = null;
-                    options.JsonSerializerOptions.DictionaryKeyPolicy = null;
-                });
+
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+
+                    options.JsonSerializerOptions.WriteIndented = true;
+                }
+            );
         }
     }
 }

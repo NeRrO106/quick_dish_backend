@@ -39,8 +39,12 @@ namespace QUickDish.API.Controllers
                 return BadRequest("Invalid user data.");
 
             var user = await _userService.CreateUserAsync(dto);
-            return Ok(user);
+            if (user == null)
+                return BadRequest("User already exists or invalid data.");
+
+            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
         }
+
         [HttpPut("{id}")]
         [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateRequest dto)

@@ -14,18 +14,9 @@ namespace QUickDish.API.Services
             _userRepo = dbRepo;
         }
 
-        private bool IsValidEmail(string email)
-        {
-            string pattern = @"^[\w\.\-]+@([\w\-]+\.)+[\w\-]{2,}$";
-            return Regex.IsMatch(email, pattern);
-        }
+        private static bool IsValidEmail(string email) => Regex.IsMatch(email, @"^[\w\.\-]+@([\w\-]+\.)+[\w\-]{2,}$");
 
-        private bool IsValidPassword(string password)
-        {
-            if (string.IsNullOrEmpty(password)) return false;
-            string pattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$";
-            return Regex.IsMatch(password, pattern);
-        }
+        private static bool IsValidPassword(string password) => !string.IsNullOrEmpty(password) && Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$");
 
         public async Task<List<User>> GetAllUsersAsync()
         {
@@ -50,18 +41,16 @@ namespace QUickDish.API.Services
         }
         public async Task<User?> CreateUserAsync(RegisterUserRequest dto)
         {
-            if (!IsValidEmail(dto.Email))
+            if (dto == null || string.IsNullOrEmpty(dto.Password))
                 return null;
 
-            if (await _userRepo.EmailExistAsync(dto.Email))
+            if (!IsValidEmail(dto.Email) || await _userRepo.EmailExistAsync(dto.Email))
                 return null;
 
             if (!IsValidPassword(dto.Password))
                 return null;
 
-            var user_exist = await _userRepo.GetUserByNameAsync(dto.Name);
-
-            if (user_exist != null)
+            if (await _userRepo.GetUserByNameAsync(dto.Name) != null)
                 return null;
 
             var user = new User
@@ -112,7 +101,7 @@ namespace QUickDish.API.Services
 
         public async Task<bool> ChangePasswordAsync(string email, string newPassword)
         {
-            var user = await _userRepo.GetUserByEmailAsync(email.ToLower());
+            var user = await _userRepo.GetUserByEmailAsync(email);
             if (user == null)
                 return false;
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
