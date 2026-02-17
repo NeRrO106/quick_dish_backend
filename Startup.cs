@@ -78,7 +78,10 @@ namespace QUickDish.API
             services.AddSingleton<EmailService>();
 
             services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlite("Data Source = quick_dish.db"));
+            {
+                var dbPath = Path.Combine(AppContext.BaseDirectory, "quick_dish.db");
+                options.UseSqlite($"Data Source={dbPath}");
+            });
 
             services.AddCors(options =>
             {
