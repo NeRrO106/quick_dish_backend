@@ -12,4 +12,4 @@ WORKDIR /app
 COPY --from=build /app/out .
 
 EXPOSE 80
-ENTRYPOINT ["dotnet", "QUickDish.dll"]
+ENTRYPOINT ["dotnet", "QUickDish.API.dll"]
