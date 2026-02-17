@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using QUickDish.API.DTOs;
 using QUickDish.API.Models;
 using QUickDish.API.Services;
@@ -13,14 +12,12 @@ namespace QUickDish.API.Controllers
     {
         private readonly OrderService _orderService;
         private readonly EmailService _emailService;
-        private readonly IMemoryCache _memoryCache;
         private readonly UserService _userService;
 
-        public OrderController(OrderService orderService, EmailService emailService, IMemoryCache memoryCache, UserService userService)
+        public OrderController(OrderService orderService, EmailService emailService, UserService userService)
         {
             _orderService = orderService;
             _emailService = emailService;
-            _memoryCache = memoryCache;
             _userService = userService;
         }
         [HttpGet]
@@ -57,15 +54,17 @@ namespace QUickDish.API.Controllers
                 return BadRequest("Invalid phone number");
 
             Random _random = new Random();
-            var code = _random.Next(100000, 999999).ToString();
+            var code = _random.Next(100000, 999999);
+
+            order.DeliveryCode = code;
 
             await _orderService.CreateOrder(order);
+
 
             var user = await _userService.GetUserByIdAsync(order.UserId);
 
             if (user != null)
             {
-                _memoryCache.Set($"order_{order.Id}", code, TimeSpan.FromMinutes(10));
                 await _emailService.SendEmailAsync(
                     user.Email,
                     "Your order has been placed!",
@@ -87,7 +86,7 @@ namespace QUickDish.API.Controllers
 
             if (dto.Code != null)
             {
-                if (!_memoryCache.TryGetValue($"order_{order.Id}", out string? cachedCode) || cachedCode != dto.Code.ToString())
+                if (dto.Code != order.DeliveryCode)
                     return BadRequest("Invalid code or code expired");
             }
 

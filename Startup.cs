@@ -16,6 +16,15 @@ namespace QUickDish.API
 
             var app = builder.Build();
 
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger(c =>
+                {
+                    c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
+                });
+                app.UseSwaggerUI();
+            }
+
             app.UseSwagger();
             app.UseHttpsRedirection();
 
@@ -28,6 +37,8 @@ namespace QUickDish.API
 
             app.Run();
         }
+
+
         public static void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();

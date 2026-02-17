@@ -26,5 +26,6 @@ namespace QUickDish.API.Models
         public string UserName { get; set; } = string.Empty;
 
         public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
+        public int DeliveryCode { get; set; }
     }
 }
