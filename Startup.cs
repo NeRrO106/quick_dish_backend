@@ -92,7 +92,7 @@ namespace QUickDish.API
                 options.AddPolicy("AllowFrontend",
                     builder =>
                     {
-                        builder.WithOrigins("https://quickdishtest.netlify.app/")
+                        builder.WithOrigins("https://quickdishtest.netlify.app", "http://localhost:5173")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();
