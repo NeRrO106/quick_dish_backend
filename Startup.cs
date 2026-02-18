@@ -10,6 +10,7 @@ namespace QUickDish.API
     {
         public static void Main(string[] args)
         {
+            Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "1");
             var builder = WebApplication.CreateBuilder(args);
             var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONN_STRING")
           ?? builder.Configuration.GetConnectionString("DefaultConnection");
