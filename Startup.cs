@@ -11,25 +11,26 @@ namespace QUickDish.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            ConfigureServices(builder.Services);
+            var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONN_STRING")
+          ?? builder.Configuration.GetConnectionString("DefaultConnection");
+            ConfigureServices(builder.Services, connectionString);
 
             var app = builder.Build();
-
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                try
-                {
-                    var context = services.GetRequiredService<AppDbContext>();
-                    context.Database.Migrate();
-                    Console.WriteLine(">>> Database migrated successfully.");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($">>> Error during migration: {ex.Message}");
-                }
-            }
+            /*
+                        using (var scope = app.Services.CreateScope())
+                        {
+                            var services = scope.ServiceProvider;
+                            try
+                            {
+                                var context = services.GetRequiredService<AppDbContext>();
+                                context.Database.Migrate();
+                                Console.WriteLine(">>> Database migrated successfully.");
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($">>> Error during migration: {ex.Message}");
+                            }
+                        }*/
 
             if (app.Environment.IsDevelopment())
             {
@@ -57,8 +58,9 @@ namespace QUickDish.API
         }
 
 
-        public static void ConfigureServices(IServiceCollection services)
+        public static void ConfigureServices(IServiceCollection services, string connectionString)
         {
+
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
@@ -79,8 +81,10 @@ namespace QUickDish.API
 
             services.AddDbContext<AppDbContext>(options =>
             {
-                var dbPath = Path.Combine(AppContext.BaseDirectory, "quick_dish.db");
-                options.UseSqlite($"Data Source={dbPath}");
+                options.UseMySql(
+                    connectionString,
+                    ServerVersion.AutoDetect(connectionString)
+                );
             });
 
             services.AddCors(options =>
