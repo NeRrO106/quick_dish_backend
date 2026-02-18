@@ -116,11 +116,19 @@ namespace QUickDish.API.Controllers
 
             _cache.Set(Email, code, TimeSpan.FromMinutes(10));
 
-            await _emailService.SendEmailAsync(
-                Email,
-                "Password Reset Code",
-                $"<h1>Password Reset Code</h1> <p>Your password reset code is: <strong>{code}</strong></p>"
-            );
+            try
+            {
+                await _emailService.SendEmailAsync(
+                    Email,
+                    "Password Reset Code",
+                    $"<h1>Password Reset Code</h1> <p>Your password reset code is: <strong>{code}</strong></p>"
+                );
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Forgot Password Email Failed: {ex.Message}");
+                return StatusCode(503, "Email service is temporarily unavailable. Please try again later.");
+            }
             return Ok("Code sent");
 
         }
@@ -144,11 +152,18 @@ namespace QUickDish.API.Controllers
                 return BadRequest("Failed to reset password");
             _cache.Remove(dto.Email);
 
-            await _emailService.SendEmailAsync(
-                dto.Email,
-                "Password Reset Confirmation",
-                "<h1>Password Reset Successful</h1><p>Your password has been reset successfully.</p>" // eliminat parola din email
-            );
+            try
+            {
+                await _emailService.SendEmailAsync(
+                    dto.Email,
+                    "Password Reset Confirmation",
+                    "<h1>Password Reset Successful</h1><p>Your password has been reset successfully.</p>"
+                );
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Reset Confirmation Email Failed: {ex.Message}");
+            }
 
             return Ok("Password reset successfully");
         }

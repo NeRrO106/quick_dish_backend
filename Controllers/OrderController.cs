@@ -65,12 +65,18 @@ namespace QUickDish.API.Controllers
 
             if (user != null)
             {
-                await _emailService.SendEmailAsync(
-                    user.Email,
-                    "Your order has been placed!",
-                    $"<h1>Hello {user.Name}</h1><p>Your order has been placed successfully. Order code: <strong>{code}</strong></p>"
-                );
-
+                try
+                {
+                    await _emailService.SendEmailAsync(
+                        user.Email,
+                        "Your order has been placed!",
+                        $"<h1>Hello {user.Name}</h1><p>Your order has been placed successfully. Order code: <strong>{code}</strong></p>"
+                    );
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to send email: {ex.Message}");
+                }
             }
             return Ok();
         }
@@ -114,14 +120,20 @@ namespace QUickDish.API.Controllers
 
                 if (sendEmail)
                 {
-                    await _emailService.SendEmailAsync(
-                        user.Email,
-                        $"Your order #{order.Id} has been updated",
-                        message
-                    );
+                    try
+                    {
+                        await _emailService.SendEmailAsync(
+                            user.Email,
+                            $"Your order #{order.Id} has been updated",
+                            message
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Failed to send email: {ex.Message}");
+                    }
                 }
             }
-
             return Ok();
         }
 
